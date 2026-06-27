@@ -1,7 +1,7 @@
 import React,{ useState} from 'react'
 import LoginForm from '../components/LoginForm'
-import RegisterForm from '../components/RegisterForm'
 import {PresentLogin, PresentRegister} from '../components/Present'
+import RegisterForm from '../components/RegisterForm'
 
 function AccessPage() {
     const [move, setMove] = useState(false);

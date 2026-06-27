@@ -1,30 +1,54 @@
-import React,{useState} from 'react'
+import React,{useState, type FormEvent} from 'react'
 import { FcGoogle } from "react-icons/fc";
 import { login} from "../services/AuthService"
-
-type Props = {
-}
+import type { Credentials } from '../types/type';
+import { useAuth } from '../hooks/useAuth';
 
 
 function LoginForm() {
-
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [form, setForm] = useState<Credentials>({
+    email: "",
+    password: ""
+    })
+    const {login: authLogin} = useAuth();
+    const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false)
-    
-    
 
-    const handleLogin = async () =>{
-        console.error({
-        type: "Tu eres el error",
-        code: 400,
-        message: "Error del Usuario"
-        });
-        console.error("Ya fue hijito, ya me cansé de resivir peticiones, la Base de Datos ya se fue, hizo 'DELETE', no me fuerces a funcionar, ya fuee entiende, ya dejalo asi, si no corre no corre")
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement>
+        ) => {
+            const { name, value } = e.target;
+
+            setForm((prev) => ({
+            ...prev,[name]: value,
+        }));
+    };    
+
+    const handleSubmit = async (e: FormEvent) =>{
+        
+        e.preventDefault();
+        setError('');
+        const {email, password} = form;
+
+
+        if(!email || !password){
+            setError('Todos los campos obligatorios')
+            return;
+        }
+        try {
+            const res = await login({email,password});
+            authLogin(res);
+            //Falta el navigate
+
+        } catch(err: unknown){
+            const axiosErr = err as {response?: {data?: {message?: string; error?: string}}};
+            const msg = axiosErr.response?.data?.message || axiosErr.response?.data?.error || 'Credenciales incorrectas';
+            setError(msg)
+        }
     }
     return (
                 <div className="w-100 h-150 bg-transparent rounded-3xl border-2 border-transparent flex justify-center items-center">
-                    <div className="absolute left-0 top-0 w-[85%] max-w-4xl min-h-[85%]">
+                    <form onSubmit = {handleSubmit} className="absolute left-0 top-0 w-[85%] max-w-4xl min-h-[85%]">
                         
                         <h1 className="mb-10 bloksy text-[#004aad] flex justify-center text-5xl">KINETICA</h1>
                         
@@ -49,8 +73,8 @@ function LoginForm() {
                             <input
                                 type="text"
                                 required
-                                value={email}
-                                onChange={(e)=>setEmail(e.target.value)}
+                                value={form.email}
+                                onChange={handleChange}
                             />
                             <label>
                                 Correo Electrónico*
@@ -63,8 +87,8 @@ function LoginForm() {
                             <input
                                 type={showPassword? "text" : "password"}
                                 required
-                                value={password}
-                                onChange={(e)=>setPassword(e.target.value)}
+                                value={form.password}
+                                onChange={handleChange}
                             />
                             <label>
                                 Contraseña*
@@ -98,18 +122,20 @@ function LoginForm() {
                             </div>
 
                         </div>                         
-
+                        <div className="text-red-500 h-6">
+                            {error && <p>{error}</p>}
+                        </div>
                         
                         <button className="rubik font-bold text-[#004aad] hover:text-blue-400  active:scale-90 transition-all duration-100">
                             Restablecer contraseña 
                         </button>
                         <button 
                             className="rubik mb-10 mt-4 w-full py-3 bg-[#004aad] rounded-xl text-[#f4ffff] hover:bg-[#3879d0] transiton active:scale-90 transition-transform duration-100"
-                            onClick={handleLogin}
+                            onClick={handleSubmit}
                         >
                             Iniciar Sesión
                         </button>               
-                    </div>
+                    </form>
 
                         
                 </div>

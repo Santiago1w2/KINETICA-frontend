@@ -1,39 +1,66 @@
-import React,{ useState} from 'react'
+import React,{ useState, type FormEvent} from 'react'
 import {register} from '../services/AuthService'
-import { LuOctagonMinus } from 'react-icons/lu';
+import type {FormRegister } from '../types/type';
+import { useAuth } from '../hooks/useAuth';
 
 
 function RegisterForm() {
-    const [username, setUsername] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [repeatPassword, setRepeatPassword] = useState("");
+    const [form, setForm] = useState<FormRegister>({
+    username: "",
+    email: "",
+    password: "",
+    repeatPassword: "",
+    });
+    const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const {login : authLogin} = useAuth();
+
+
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement>
+        ) => {
+            const { name, value } = e.target;
+
+            setForm((prev) => ({
+            ...prev,[name]: value,
+        }));
+    };    
 
 
     const verifyPassword = () =>{
-        if(repeatPassword.length===0 || password.length===0){
+        if(form.repeatPassword.length===0 || form.password.length===0){
             return false;
         }
-        return repeatPassword !== password ;
+        return form.repeatPassword !== form.password ;
     }
-    const handleRegister= async () =>{
-        if(!verifyPassword()){
-            await register({
-            email,
-            password,
-        })
-        }
+    const handleSubmit = async (e: FormEvent) =>{
         
-        setEmail("")
-        setPassword("")
-    }
+        e.preventDefault();
+        setError('');
+        const {email, password, username} = form;
 
+
+        if(!email || !password){
+            setError('Todos los campos obligatorios')
+            return;
+        }
+        try {
+            const res = await register({email,password});
+            authLogin(res);
+            localStorage.setItem('username', username);
+            //Falta el navigate
+
+        } catch(err: unknown){
+            const axiosErr = err as {response?: {data?: {message?: string; error?: string}}};
+            const msg = axiosErr.response?.data?.message || axiosErr.response?.data?.error || 'Credenciales incorrectas';
+            setError(msg)
+        }
+    }
     
     
 return (
                 <div className="w-100 h-150 bg-transparent rounded-3xl border-2 border-transparent flex justify-center items-center">
-                    <div className="w-[85%] max-w-4xl min-h-[85%]">
+                    <form onSubmit = {handleSubmit} className="w-[85%] max-w-4xl min-h-[85%]">
                         
                         <h1 className="mb-10 bloksy text-[#004aad] flex justify-center text-5xl">KINETICA</h1>                    
 
@@ -41,8 +68,8 @@ return (
                             <input
                                 type="text"
                                 required
-                                value={username}
-                                onChange={(e)=>setUsername(e.target.value)}
+                                value={form.username}
+                                onChange={handleChange}
                             />
                             <label>
                                 Nombre de Usuario*
@@ -53,8 +80,8 @@ return (
                             <input
                                 type="text"
                                 required
-                                value={email}
-                                onChange={(e)=>setEmail(e.target.value)}
+                                value={form.email}
+                                onChange={handleChange}
                             />
                             <label>
                                 Correo Electrónico*
@@ -65,8 +92,8 @@ return (
                             <input
                                 type={showPassword? "text" : "password"}
                                 required
-                                value={password}
-                                onChange={(e)=>setPassword(e.target.value)}
+                                value={form.password}
+                                onChange={handleChange}
                             />
                             <label>
                                 Contraseña*
@@ -102,23 +129,23 @@ return (
                             <input
                                 type="text"
                                 required
-                                value={repeatPassword}
-                                onChange={(e)=>setRepeatPassword(e.target.value)}
+                                value={form.repeatPassword}
+                                onChange={handleChange}
                             />
                             <label>
                                 Repetir Contraseña*
                             </label>
                         </div>
                         <div className="text-red-500 h-6">
-                            {verifyPassword()&&"Las contraseñas no coinciden"}
+                            {verifyPassword()&&"Las contraseñas no coinciden"} || {error && <p>{error}</p>}
                         </div>
-                        <button 
+                        <button
+                            type= 'submit' 
                             className="rubik mb-10 mt-4 w-full py-3 bg-[#004aad] rounded-xl text-[#f4ffff] hover:bg-[#3879d0] transiton active:scale-90 transition-transform duration-100"
-                            onClick={handleRegister}
                         >
                             Registrarse
                         </button>               
-                    </div>
+                    </form>
                     
                         
                 </div>    
