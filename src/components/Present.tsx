@@ -1,14 +1,11 @@
 import React from 'react'
 import img1 from "../assets/img1.png";
+import { useNavigate } from 'react-router-dom';
 
 
-    type Props = {
-        setPantalla:(pantalla:"login" | "register") => void;
-        pantalla: "login" | "register";
-    }
 
-
-export function PresentLogin({setPantalla, pantalla}: Props) {
+export function PresentLogin() {
+    const navigate = useNavigate();
     return (
         <div className= "flex w-full h-full flex-col justify-center items-center bg-[#004aad] border-transparent rounded-r-[200px] rounded-l-[40px]">
 
@@ -28,7 +25,7 @@ export function PresentLogin({setPantalla, pantalla}: Props) {
                 </p>
                 <button
                     className="py-2 px-4 bg-transparent border-2 rounded-xl border-[#f4ffff] text-[#f4ffff] active:bg-[#f4ffff] active:text-[#004aad] active:border-[#3879d0] active:scale-90 transition-transform duration-100"
-                    onClick={()=>setPantalla("register")}
+                    onClick={()=>navigate('/register')}
                 >
                     Registrarse
                 </button>
@@ -37,7 +34,8 @@ export function PresentLogin({setPantalla, pantalla}: Props) {
     );
 }
 
-export function PresentRegister({setPantalla}: Props) {
+export function PresentRegister() {
+    const navigate = useNavigate();
     return (
         <div className="w-full h-full flex flex-col justify-center items-center bg-[#004aad] border-transparent rounded-l-[200px] rounded-r-[40px]">
 
@@ -52,7 +50,7 @@ export function PresentRegister({setPantalla}: Props) {
 
                 <button
                     className="py-2 px-4 bg-transparent border-2 rounded-xl border-[#f4ffff] text-[#f4ffff] active:bg-[#f4ffff] active:text-[#004aad] active:border-[#3879d0] active:scale-90 transition-transform duration-100"
-                    onClick={()=>setPantalla("login")}
+                    onClick={()=>navigate('/login')}
                 >
                     Inciar Sesión
                 </button>

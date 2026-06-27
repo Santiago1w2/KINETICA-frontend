@@ -2,6 +2,7 @@ import React,{ useState, type FormEvent} from 'react'
 import {register} from '../services/AuthService'
 import type {FormRegister } from '../types/type';
 import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 
 function RegisterForm() {
@@ -14,6 +15,7 @@ function RegisterForm() {
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const {login : authLogin} = useAuth();
+    const navigate = useNavigate();
 
 
     const handleChange = (
@@ -48,7 +50,7 @@ function RegisterForm() {
             const res = await register({email,password});
             authLogin(res);
             localStorage.setItem('username', username);
-            //Falta el navigate
+            navigate('/')
 
         } catch(err: unknown){
             const axiosErr = err as {response?: {data?: {message?: string; error?: string}}};
@@ -66,6 +68,7 @@ return (
 
                         <div className="rubik floating-input my-7">
                             <input
+                                name = 'username'
                                 type="text"
                                 required
                                 value={form.username}
@@ -78,6 +81,7 @@ return (
 
                         <div className="rubik floating-input my-7">
                             <input
+                                name='email'
                                 type="text"
                                 required
                                 value={form.email}
@@ -90,6 +94,7 @@ return (
 
                         <div className="rubik floating-input mt-7 mb-2">
                             <input
+                                name='password'
                                 type={showPassword? "text" : "password"}
                                 required
                                 value={form.password}
@@ -127,6 +132,7 @@ return (
                         </div> 
                         <div className="rubik floating-input my-3">
                             <input
+                                name='repeatPassword'
                                 type="text"
                                 required
                                 value={form.repeatPassword}
@@ -136,7 +142,7 @@ return (
                                 Repetir Contraseña*
                             </label>
                         </div>
-                        <div className="text-red-500 h-6">
+                        <div className="*:h-6">
                             {verifyPassword()&&"Las contraseñas no coinciden"} || {error && <p>{error}</p>}
                         </div>
                         <button

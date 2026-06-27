@@ -3,8 +3,7 @@ import LoginForm from '../components/LoginForm'
 import {PresentLogin, PresentRegister} from '../components/Present'
 import RegisterForm from '../components/RegisterForm'
 
-function AccessPage() {
-    const [move, setMove] = useState(false);
+function AccessPageLogin() {
     const [pantalla, setPantalla] = useState<"login" | "register">("login")
     return (
             <div className="w-screen h-screen flex justify-center items-center bg-gradient-to-r from-[#f4ffff] to-blue-300">
@@ -13,32 +12,17 @@ function AccessPage() {
                     
                     
                     
-                    {pantalla === "login" &&
+                    
                     <div className="w-1/2">
-                        <PresentLogin setPantalla={setPantalla} pantalla={pantalla} />
-                    </div>}
+                        <PresentLogin />
+                    </div>
 
-                
-
-                    { pantalla === "register" && 
-                    <div className="w-1/2 flex items-center justify-center">
-                        <div className="scale-85">
-                            {<RegisterForm />}
-                        </div>
-                    </div>}
-                    { pantalla === "login" && 
+                    
                     <div className="w-1/2 flex items-center justify-center">
                         <div className="scale-85">
                             {<LoginForm />}
                         </div>
-                    </div>}
-
-                    
-                    
-                    {pantalla === "register" &&
-                    <div className="w-1/2">
-                        <PresentRegister setPantalla={setPantalla} pantalla={pantalla}/>
-                    </div>}
+                    </div>
 
                     
                 </div>
@@ -47,4 +31,4 @@ function AccessPage() {
     )
 }
 
-export default AccessPage
+export default AccessPageLogin

@@ -3,6 +3,7 @@ import { FcGoogle } from "react-icons/fc";
 import { login} from "../services/AuthService"
 import type { Credentials } from '../types/type';
 import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 
 function LoginForm() {
@@ -12,7 +13,8 @@ function LoginForm() {
     })
     const {login: authLogin} = useAuth();
     const [error, setError] = useState('');
-    const [showPassword, setShowPassword] = useState(false)
+    const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement>
@@ -38,6 +40,7 @@ function LoginForm() {
         try {
             const res = await login({email,password});
             authLogin(res);
+            navigate('/')
             //Falta el navigate
 
         } catch(err: unknown){
@@ -52,7 +55,7 @@ function LoginForm() {
                         
                         <h1 className="mb-10 bloksy text-[#004aad] flex justify-center text-5xl">KINETICA</h1>
                         
-                        <button className="rubik my-5 w-full py-3 border border-[#004aad] rounded-2xl flex items-center justify-center gap-3 bg-transparent hover:border-[#1a73e8] hover:bg-blue-100 active:scale-90 transition-all duration-100">
+                        <button type='button' className="rubik my-5 w-full py-3 border border-[#004aad] rounded-2xl flex items-center justify-center gap-3 bg-transparent hover:border-[#1a73e8] hover:bg-blue-100 active:scale-90 transition-all duration-100">
                             <FcGoogle className="text-3xl" />
                             Continuar con Google
                         </button>
@@ -71,6 +74,7 @@ function LoginForm() {
 
                         <div className="rubik floating-input my-7">
                             <input
+                                name='email'
                                 type="text"
                                 required
                                 value={form.email}
@@ -85,6 +89,7 @@ function LoginForm() {
 
                         <div className="rubik floating-input mt-7 mb-2">
                             <input
+                                name='password'
                                 type={showPassword? "text" : "password"}
                                 required
                                 value={form.password}
@@ -130,6 +135,7 @@ function LoginForm() {
                             Restablecer contraseña 
                         </button>
                         <button 
+                            type= 'submit'
                             className="rubik mb-10 mt-4 w-full py-3 bg-[#004aad] rounded-xl text-[#f4ffff] hover:bg-[#3879d0] transiton active:scale-90 transition-transform duration-100"
                             onClick={handleSubmit}
                         >
