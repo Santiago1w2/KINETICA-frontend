@@ -1,0 +1,33 @@
+<button
+  className="
+    my-5
+    w-full
+    py-4
+    border
+    border-[#9e9e9e]
+    rounded-2xl
+    flex
+    items-center
+    justify-center
+    gap-3
+    bg-transparent
+    hover:border-[#1a73e8]
+    hover:bg-blue-50
+    transition-all
+    duration-150
+  "
+>
+  <FcGoogle className="text-3xl" />
+  Continuar con Google
+</button>
+
+<div className="floating-input">
+    <input
+        type="text"
+        required
+    />
+
+    <label>
+        First Name
+    </label>
+</div>

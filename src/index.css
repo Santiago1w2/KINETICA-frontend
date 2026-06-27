@@ -1,0 +1,209 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "BloksyOne";
+  src: url("../src/fonts/Bloksy\ One.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+/*Prueba animaciones*/
+
+.box {
+    position: absolute;
+
+
+    top: 0;
+    left: 0;
+
+    width: 50%;
+    height: 100%;
+
+    z-index: 1;
+
+    transition: width 0.8s ease, border-radius 0.8s ease;
+}
+
+.box.expand {
+    width: 100%;
+        border-top-right-radius: 40px;
+    border-bottom-right-radius:40px;
+}
+
+.login-form{
+  position: relative;
+  z-index: 2;
+  
+}
+
+
+/*Fuente BloksyOne*/
+.bloksy {
+    font-family: "BloksyOne", sans-serif;
+}
+/*Fuente Rubik*/
+.rubik {
+  font-family: "Rubik", sans-serif;
+}
+
+
+/*Animacion del input login y register*/
+.floating-input {
+    position: relative;
+    width: 100%;
+}
+
+.floating-input input {
+    width: 100%;
+    background: transparent;
+    border: 1px solid #004aad;
+    border-radius: 16px;
+
+    padding: 24px 16px 12px 16px;
+
+    outline: none;
+    transition: all 0.15s;
+}
+
+.floating-input input:hover,
+.floating-input input:focus,
+.floating-input input:valid {
+    border-color: #1a73e8;
+}
+
+.floating-input label {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #8e8e8e;
+    pointer-events: none;
+    transition: all 0.15s;
+}
+
+.floating-input input:hover + label,
+.floating-input input:focus + label,
+.floating-input input:valid + label {
+    top: 0;
+    transform: translateY(-50%) scale(0.9);
+    background: #f4ffff;
+    padding: 0 4px;
+    color: #2196f3;
+}
+
+
+
+
+/*Animacion del checkbox 'Mostrar contraseña'*/
+.checkbox-wrapper-15 .cbx {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+.checkbox-wrapper-15 .cbx span {
+  display: inline-block;
+  vertical-align: middle;
+  transform: translate3d(0, 0, 0);
+}
+.checkbox-wrapper-15 .cbx span:first-child {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  transform: scale(1);
+  vertical-align: middle;
+  border: 1px solid black;
+  transition: all 0.2s ease;
+}
+.checkbox-wrapper-15 .cbx span:first-child svg {
+  position: absolute;
+  z-index: 1;
+  top: 8px;
+  left: 6px;
+  fill: none;
+  stroke: #f4ffff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 16px;
+  stroke-dashoffset: 16px;
+  transition: all 0.3s ease;
+  transition-delay: 0.1s;
+  transform: translate3d(0, 0, 0);
+}
+.checkbox-wrapper-15 .cbx span:first-child:before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  background: #004aad;
+  display: block;
+  transform: scale(0);
+  opacity: 1;
+  border-radius: 50%;
+  transition-delay: 0.2s;
+}
+.checkbox-wrapper-15 .cbx:hover span:first-child {
+  border-color: #004aad;
+}
+
+.checkbox-wrapper-15 .inp-cbx:checked + .cbx span:first-child {
+  border-color: #004aad;
+  background: #004aad;
+  animation: check-15 0.6s ease;
+}
+.checkbox-wrapper-15 .inp-cbx:checked + .cbx span:first-child svg {
+  stroke-dashoffset: 0;
+}
+.checkbox-wrapper-15 .inp-cbx:checked + .cbx span:first-child:before {
+  transform: scale(2.2);
+  opacity: 0;
+  transition: all 0.6s ease;
+}
+.checkbox-wrapper-15 .inp-cbx:checked + .cbx span:last-child {
+  color: rgb(255 255 255 / 10%);
+  transition: all 0.3s ease;
+}
+.checkbox-wrapper-15 .inp-cbx:checked + .cbx span:last-child:after {
+  transform: scaleX(1);
+  transition: all 0.3s ease;
+}
+
+@keyframes check-15 {
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+
+
+/*Animaciond el panel*/
+.panel {
+    transition: all 1s ease;
+}
+
+.panel.move {
+    transform: translateX(-20%);
+    
+}
+
+
+/*Animacion del navbar*/
+@keyframes navbarEnter {
+    0% {
+        opacity: 0;
+        transform: translateY(-100px);
+    }
+
+    70% {
+        transform: translateY(10px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-navbar {
+    animation: navbarEnter 0.8s ease-out forwards;
+}
