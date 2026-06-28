@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage'
 import Navbar from './components/Navbar'
 import AuthProvider from './context/AuthProvider'
 import { AppRouter } from './routes/AppRoute'
+import TraductorPage  from './pages/TraductorPage'
 
 type Props = {
 

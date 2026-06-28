@@ -26,7 +26,7 @@ function Navbar() {
     <ul className="rubik flex gap-20 text-[15px]">
         <li>Inicio</li>
         <li>Cómo funciona</li>
-        <li>Beneficios</li>
+        <li><Link to='/traductor'>Traductor</Link></li>
         <li>Contacto</li>
     </ul>
 

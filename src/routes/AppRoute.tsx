@@ -4,7 +4,7 @@ import AccessPageRegister from '../pages/AccessPageRegister';
 import HomePage from '../pages/HomePage';
 import OAuthCallback from "../pages/OAuthCallback";
 import OAuthError from "../pages/OAuthError";
-import ProtectedRoute from './ProtectedRoute';
+import TraductorPage from "../pages/TraductorPage";
 
 export const AppRouter = () => {
 return (
@@ -15,6 +15,7 @@ return (
         <Route path="/auth/register" element={<AccessPageRegister />} />
         <Route path="/auth/callback" element={<OAuthCallback />} />
         <Route path="/auth/error" element={<OAuthError />} />
+        <Route path="/traductor" element={<TraductorPage />} />
     </Routes>
     </BrowserRouter>
 );

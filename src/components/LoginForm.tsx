@@ -1,7 +1,7 @@
 import React,{useState, type FormEvent} from 'react'
 import { FcGoogle } from "react-icons/fc";
 import { login} from "../services/AuthService"
-import type { Credentials } from '../types/type';
+import type { Credentials } from '../types/auth/type';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
@@ -48,7 +48,6 @@ function LoginForm() {
             const res = await login({email,password});
             authLogin(res);
             navigate('/')
-            //Falta el navigate
 
         } catch(err: unknown){
             const axiosErr = err as {response?: {data?: {message?: string; error?: string}}};

@@ -1,6 +1,6 @@
 import React,{ useState, type FormEvent} from 'react'
 import {register} from '../services/AuthService'
-import type {FormRegister } from '../types/type';
+import type {FormRegister } from '../types/auth/type';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 

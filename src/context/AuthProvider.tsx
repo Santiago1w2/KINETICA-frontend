@@ -1,6 +1,6 @@
 import React, { type ReactNode, useEffect, useState } from 'react'
 import { AuthContext } from './AuthContext';
-import type { AuthResponse } from '../types/type';
+import type { AuthResponse } from '../types/auth/type';
 import api from '../api/axios';
 
 export default function AuthProvider({children}:{children:ReactNode}) {

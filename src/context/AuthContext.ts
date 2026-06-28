@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import type { AuthResponse } from "../types/type";
+import type { AuthResponse } from "../types/auth/type";
 
 export interface AuthContextType{
     accessToken: string | null;
