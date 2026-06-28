@@ -2,7 +2,7 @@ import { createContext } from "react";
 import type { AuthResponse } from "../types/type";
 
 export interface AuthContextType{
-    accesToken: string | null;
+    accessToken: string | null;
     refreshToken: string |null;
     login: (response: AuthResponse) => void;
     logout: () => void;
