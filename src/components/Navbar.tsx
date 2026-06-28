@@ -17,18 +17,7 @@ function Navbar() {
                 shadow-[0_0_50px_rgba(0,74,173,0.4)]
                 flex items-center justify-between">
 
-    {/* Logo */}
-    <div className="bloksy text-[#004aad] text-3xl">
-        KINETICA
-    </div>
-
-    {/* Menú central */}
-    <ul className="rubik flex gap-20 text-[15px]">
-        <li>Inicio</li>
-        <li>Cómo funciona</li>
-        <li>Beneficios</li>
-        <li>Contacto</li>
-    </ul>
+   
 
     {/* Menú derecho */}
     <ul className="rubik flex gap-6 items-center">
@@ -55,6 +44,8 @@ function Navbar() {
                         Registrarse
                     </Link>
                 </li>
+                <li><Link to='/help'>Soporte</Link></li>
+                <li><Link to='/about-us'>Conócenos</Link></li>
             </>
         )}
     </ul>
