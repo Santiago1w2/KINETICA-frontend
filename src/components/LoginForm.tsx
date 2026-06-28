@@ -137,8 +137,8 @@ function LoginForm() {
                             {error && <p>{error}</p>}
                         </div>
                         
-                        <button className="rubik font-bold text-[#004aad] hover:text-blue-400  active:scale-90 transition-all duration-100">
-                            Restablecer contraseña 
+                        <button type="button" className="rubik font-bold text-[#004aad] hover:text-blue-400  active:scale-90 transition-all duration-100">
+                            Restablecer contraseña
                         </button>
                         <button 
                             type= 'submit'

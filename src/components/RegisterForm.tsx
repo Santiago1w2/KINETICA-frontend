@@ -36,14 +36,22 @@ function RegisterForm() {
         return form.repeatPassword !== form.password ;
     }
     const handleSubmit = async (e: FormEvent) =>{
-        
+
         e.preventDefault();
         setError('');
         const {email, password, username} = form;
 
-
-        if(!email || !password){
-            setError('Todos los campos obligatorios')
+        if(!email || !password || !username){
+            setError('Todos los campos son obligatorios')
+            return;
+        }
+        if (verifyPassword()) {
+            setError('Las contraseñas no coinciden');
+            return;
+        }
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,72}$/;
+        if (!passwordRegex.test(password)) {
+            setError('La contraseña debe tener mínimo 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial');
             return;
         }
         try {
