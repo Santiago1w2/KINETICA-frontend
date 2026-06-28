@@ -18,6 +18,7 @@ type ModelProps = React.JSX.IntrinsicElements['group'] & {
   activeClips?: string[]
   signBase64?: string | null
   testClips?: THREE.AnimationClip[]
+  timeScale?: number
 }
 
 function useSignClips(signBase64: string | null): THREE.AnimationClip[] {
@@ -32,7 +33,7 @@ function useSignClips(signBase64: string | null): THREE.AnimationClip[] {
   return clips
 }
 
-export function Model({ activeAnim = null, activeClips, signBase64 = null, testClips = [], ...props }: ModelProps) {
+export function Model({ activeAnim = null, activeClips, signBase64 = null, testClips = [], timeScale = 1, ...props }: ModelProps) {
   const group = React.useRef<THREE.Group>(null!)
   const { scene, animations: mainAnims } = useGLTF('/chullov1.1-transformed.glb')
 
@@ -56,9 +57,18 @@ export function Model({ activeAnim = null, activeClips, signBase64 = null, testC
     names.forEach((name) => {
       if (actions[name]) {
         actions[name]!.reset().play()
+        actions[name]!.timeScale = timeScale
       }
     })
   }, [activeAnim, activeClips, actions])
+
+  React.useEffect(() => {
+    Object.values(actions).forEach((action) => {
+      if (action) {
+        action.timeScale = timeScale
+      }
+    })
+  }, [timeScale, actions])
 
   const flatMat = React.useMemo(() => new THREE.MeshBasicMaterial({
     flatShading: true,

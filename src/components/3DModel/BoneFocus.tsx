@@ -8,11 +8,13 @@ interface OrbitControlsLike {
 }
 
 export interface BoneFocusHandle {
-  focusOn: (name: string) => void
+
+  focusOn: (name: string, distance?: number) => void
 }
 
 const BoneFocus = forwardRef<BoneFocusHandle>((_props, ref) => {
-  const { scene, controls } = useThree()
+
+  const { scene, controls, camera } = useThree()
   const bonesRef = useRef<Map<string, THREE.Object3D>>(new Map())
 
   useEffect(() => {
@@ -26,13 +28,26 @@ const BoneFocus = forwardRef<BoneFocusHandle>((_props, ref) => {
   }, [scene])
 
   useImperativeHandle(ref, () => ({
-    focusOn: (name: string) => {
+    focusOn: (name: string, distance: number = 5) => {
       const bone = bonesRef.current.get(name)
-      if (!bone || !controls) return
+      if (!bone || !controls || !camera) return
+
       const oc = controls as unknown as OrbitControlsLike
-      const pos = new THREE.Vector3()
-      bone.getWorldPosition(pos)
-      oc.target.copy(pos)
+      const targetPos = new THREE.Vector3()
+      
+
+      bone.getWorldPosition(targetPos)
+
+
+      oc.target.copy(targetPos)
+
+   
+      camera.position.set(
+        targetPos.x, 
+        targetPos.y + 3, 
+        targetPos.z + distance
+      )
+
       oc.update()
     }
   }))

@@ -1,5 +1,5 @@
 import React from 'react'
-import img1 from "../assets/img1.png";
+import img1 from "../assets/chullo_saludo.webp";
 import { useNavigate } from 'react-router-dom';
 
 
