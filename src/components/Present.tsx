@@ -52,7 +52,7 @@ export function PresentRegister() {
                     className="py-2 px-4 bg-transparent border-2 rounded-xl border-[#f4ffff] text-[#f4ffff] active:bg-[#f4ffff] active:text-[#004aad] active:border-[#3879d0] active:scale-90 transition-transform duration-100"
                     onClick={()=>navigate('/auth/login')}
                 >
-                    Inciar Sesión
+                    Iniciar Sesión
                 </button>
 
         </div>

@@ -133,7 +133,7 @@ return (
                         <div className="rubik floating-input my-3">
                             <input
                                 name='repeatPassword'
-                                type="text"
+                                type="password"
                                 required
                                 value={form.repeatPassword}
                                 onChange={handleChange}
