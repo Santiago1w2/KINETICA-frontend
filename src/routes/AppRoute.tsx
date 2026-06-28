@@ -10,7 +10,7 @@ export const AppRouter = () => {
 return (
     <BrowserRouter>
     <Routes>
-        <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/auth/login" element={<AccessPageLogin />} />
         <Route path="/auth/register" element={<AccessPageRegister />} />
         <Route path="/auth/callback" element={<OAuthCallback />} />

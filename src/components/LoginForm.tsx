@@ -16,9 +16,13 @@ function LoginForm() {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
-      const handleGoogleLogin = () => {
+    const handleHome= () =>{
+        navigate("/")
+    }
+
+    const handleGoogleLogin = () => {
     window.location.href = "http://localhost:8080/oauth2/authorization/google";
-  };
+    };
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement>
         ) => {
@@ -137,16 +141,19 @@ function LoginForm() {
                             {error && <p>{error}</p>}
                         </div>
                         
-                        <button type="button" className="rubik font-bold text-[#004aad] hover:text-blue-400  active:scale-90 transition-all duration-100">
-                            Restablecer contraseña
-                        </button>
                         <button 
                             type= 'submit'
-                            className="rubik mb-10 mt-4 w-full py-3 bg-[#004aad] rounded-xl text-[#f4ffff] hover:bg-[#3879d0] transiton active:scale-90 transition-transform duration-100"
+                            className="rubik mb-2 mt-4 w-full py-3 bg-[#004aad] rounded-xl text-[#f4ffff] hover:bg-[#3879d0] transiton active:scale-90 transition-transform duration-100"
                             onClick={handleSubmit}
                         >
                             Iniciar Sesión
-                        </button>               
+                        </button> 
+                        <button 
+                            onClick={handleHome}
+                            type="button" 
+                            className="rubik text-xl font-bold text-[#004aad] hover:text-blue-400  active:scale-90 transition-all duration-100">
+                            Volver al Home
+                        </button>              
                     </form>
 
                         

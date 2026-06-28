@@ -1,10 +1,7 @@
-import React,{ useState} from 'react'
-import LoginForm from '../components/LoginForm'
-import {PresentLogin, PresentRegister} from '../components/Present'
+import { PresentRegister} from '../components/Present'
 import RegisterForm from '../components/RegisterForm'
 
 function AccessPageRegister() {
-    const [pantalla, setPantalla] = useState<"login" | "register">("login")
     return (
             <div className="w-screen h-screen flex justify-center items-center bg-gradient-to-r from-[#f4ffff] to-blue-300">
     
