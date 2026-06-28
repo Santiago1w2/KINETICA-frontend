@@ -142,8 +142,8 @@ return (
                                 Repetir Contraseña*
                             </label>
                         </div>
-                        <div className="*:h-6">
-                            {verifyPassword()&&"Las contraseñas no coinciden"} || {error && <p>{error}</p>}
+                        <div className="text-red-500 h-6">
+                            {verifyPassword()&&"Las contraseñas no coinciden"}  {error && <p>{error}</p>}
                         </div>
                         <button
                             type= 'submit' 

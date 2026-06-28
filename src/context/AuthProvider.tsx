@@ -8,7 +8,7 @@ export default function AuthProvider({children}:{children:ReactNode}) {
     const [loading, setLoading] = useState(false);
 
     useEffect(()=>{
-        const savedToken = localStorage.getItem('accesToken');
+        const savedToken = localStorage.getItem('accessToken');
         setLoading(true);
         if(savedToken){
             setAccesToken(savedToken);
@@ -17,13 +17,13 @@ export default function AuthProvider({children}:{children:ReactNode}) {
     },[])
 
     const login = (response: AuthResponse) => {
-        localStorage.setItem('accesToken', response.accessToken);
+        localStorage.setItem('accessToken', response.accessToken);
         localStorage.setItem('refreshToken', response.refreshToken);
-        setAccesToken(accesToken);
-        setRefreshToken(refreshToken);
+        setAccesToken(response.accessToken);
+        setRefreshToken(response.refreshToken);
     }
     const logout = () => {
-        localStorage.removeItem('accesToken');
+        localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         setAccesToken(null);
         setRefreshToken(null);

@@ -16,6 +16,9 @@ function LoginForm() {
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
+      const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+  };
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement>
         ) => {
@@ -55,7 +58,10 @@ function LoginForm() {
                         
                         <h1 className="mb-10 bloksy text-[#004aad] flex justify-center text-5xl">KINETICA</h1>
                         
-                        <button type='button' className="rubik my-5 w-full py-3 border border-[#004aad] rounded-2xl flex items-center justify-center gap-3 bg-transparent hover:border-[#1a73e8] hover:bg-blue-100 active:scale-90 transition-all duration-100">
+                        <button 
+                            onClick={handleGoogleLogin}
+                            type='button' 
+                            className="rubik my-5 w-full py-3 border border-[#004aad] rounded-2xl flex items-center justify-center gap-3 bg-transparent hover:border-[#1a73e8] hover:bg-blue-100 active:scale-90 transition-all duration-100">
                             <FcGoogle className="text-3xl" />
                             Continuar con Google
                         </button>

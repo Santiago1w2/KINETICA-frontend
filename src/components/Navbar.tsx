@@ -10,8 +10,8 @@ function Navbar() {
                 <li>Cómo funciona</li>
                 <li>Beneficios</li>
                 <li>Contacto</li>
-                <li><Link to='/login'>Login</Link></li>
-                <li><Link to='/register'>Register</Link></li>
+                <li><Link to='/auth/login'>Login</Link></li>
+                <li><Link to='/auth/register'>Register</Link></li>
             </ul>
         </div>
     )
