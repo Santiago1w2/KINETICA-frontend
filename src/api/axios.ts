@@ -1,9 +1,10 @@
 import axios from 'axios'
 
-const BASE_URL = 'http://localhost:8080/api/v1'
+const BASE_URL = '/api/v1'
 
 const api = axios.create({
-    baseURL:BASE_URL,
+    baseURL: BASE_URL,
+    withCredentials: true,
 })
 
 api.interceptors.request.use((config)=>{
@@ -58,7 +59,7 @@ api.interceptors.response.use(
                 localStorage.removeItem("accessToken");
                 localStorage.removeItem("refreshToken");
 
-                window.location.href = "/login";
+                window.location.href = "/auth/login";
 
                 throw refreshError;
             }

@@ -5,6 +5,9 @@ import HomePage from '../pages/HomePage';
 import MainLayout from '../layouts/MainLayout';
 import AboutUsPage from '../pages/AboutUsPage';
 import HelpPage from '../pages/HelpPage';
+import OAuthCallback from "../pages/OAuthCallback";
+import OAuthError from "../pages/OAuthError";
+import ProtectedRoute from './ProtectedRoute';
 
 const router = createBrowserRouter([
   {
@@ -23,13 +26,31 @@ const router = createBrowserRouter([
         path: 'help',
         element: <HelpPage />,
       },
+    ],
+  },
+        {
+    path: "/auth/",
+    element: <MainLayout />,
+    children: [
       {
-      path: "login",
-      element: <AccessPageLogin />,
+        index: false, 
+        element: <HomePage />,
       },
       {
-      path: "register",
-      element: <AccessPageRegister />,
+        path: 'login',
+        element: <AccessPageLogin />,
+      },
+      {
+        path: 'register',
+        element: <AccessPageRegister />,
+      },
+      {
+        path: 'callback',
+        element: <OAuthCallback />,
+      },
+      {
+        path: 'error',
+        element: <OAuthError />,
       },
     ],
   },

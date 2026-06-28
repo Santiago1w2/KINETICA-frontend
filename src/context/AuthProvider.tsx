@@ -1,15 +1,15 @@
 import React, { type ReactNode, useEffect, useState } from 'react'
 import { AuthContext } from './AuthContext';
 import type { AuthResponse } from '../types/type';
+import api from '../api/axios';
 
 export default function AuthProvider({children}:{children:ReactNode}) {
-    const[accesToken, setAccesToken] = useState<string | null>(null);
+    const[accessToken, setAccesToken] = useState<string | null>(null);
     const [refreshToken, setRefreshToken] = useState<string | null> (null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(()=>{
-        const savedToken = localStorage.getItem('accesToken');
-        setLoading(true);
+        const savedToken = localStorage.getItem('accessToken');
         if(savedToken){
             setAccesToken(savedToken);
         }
@@ -17,19 +17,26 @@ export default function AuthProvider({children}:{children:ReactNode}) {
     },[])
 
     const login = (response: AuthResponse) => {
-        localStorage.setItem('accesToken', response.accessToken);
+        localStorage.setItem('accessToken', response.accessToken);
         localStorage.setItem('refreshToken', response.refreshToken);
-        setAccesToken(accesToken);
-        setRefreshToken(refreshToken);
+        setAccesToken(response.accessToken);
+        setRefreshToken(response.refreshToken);
     }
-    const logout = () => {
-        localStorage.removeItem('accesToken');
+    const logout = async () => {
+        const rt = refreshToken ?? localStorage.getItem('refreshToken');
+        localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         setAccesToken(null);
         setRefreshToken(null);
+        if (rt) {
+            try {
+                await api.post('/auth/logout', { refreshToken: rt });
+            } catch {
+            }
+        }
     }
     return (
-        <AuthContext.Provider value = {{accesToken,refreshToken,login,logout, loading}}>
+        <AuthContext.Provider value = {{accessToken,refreshToken,login,logout, loading}}>
             {children}
         </AuthContext.Provider>
     )
