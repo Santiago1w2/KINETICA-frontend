@@ -58,7 +58,7 @@ function RegisterForm() {
             const res = await register({email,password});
             authLogin(res);
             localStorage.setItem('username', username);
-            navigate('/')
+            navigate('/dashboard')
 
         } catch(err: unknown){
             const axiosErr = err as {response?: {data?: {message?: string; error?: string}}};
@@ -70,13 +70,13 @@ function RegisterForm() {
     
 return (
                 <div className="w-100 h-150 bg-transparent rounded-3xl border-2 border-transparent flex justify-center items-center">
-                    <form onSubmit = {handleSubmit} className="w-[85%] max-w-4xl min-h-[85%]">
+                    <form onSubmit = {handleSubmit} className="w-[85%] max-w-4xl min-h-[85%]" noValidate>
                         
                         <h1 className="mb-10 bloksy text-[#004aad] flex justify-center text-5xl">KINETICA</h1>                    
 
                         <div className="rubik floating-input my-7">
                             <input
-                                name = 'username'
+                                name='username'
                                 type="text"
                                 required
                                 value={form.username}

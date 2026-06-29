@@ -1,5 +1,5 @@
-import { PresentRegister} from '../components/Present'
-import RegisterForm from '../components/RegisterForm'
+import { PresentRegister} from '../../components/Present'
+import RegisterForm from '../../components/RegisterForm'
 
 function AccessPageRegister() {
     return (

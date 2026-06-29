@@ -15,3 +15,4 @@ export interface FormRegister extends Credentials {
     username: string;
     repeatPassword: string;
 }
+

@@ -40,6 +40,7 @@ export function useTranslationFlow() {
         setStatus('Enviando video al modelo...')
         try {
             const body = await sendVideoToModel(blob)
+            console.log("RESPUESTA MODELO:", body)
             handleModelResult(body)
             setStatus('Prediccion recibida desde el modelo.')
         } catch (err) {
@@ -52,7 +53,7 @@ export function useTranslationFlow() {
 
     const submitToBackend = async () => {
         if (!sourceText.trim()) {
-            setError('No hay texto para enviar al backend.')
+            setError('Nose pudo traducir')
         return
     }
 

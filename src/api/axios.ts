@@ -5,7 +5,9 @@ const BASE_URL = '/api/v1'
 const api = axios.create({
     baseURL: BASE_URL,
     withCredentials: true,
-})
+    }
+
+)
 
 api.interceptors.request.use((config)=>{
     const accessToken = localStorage.getItem('accessToken');
@@ -14,7 +16,12 @@ api.interceptors.request.use((config)=>{
         config.headers.Authorization = `Bearer ${accessToken}`
     }
     return config;
-})
+
+    },
+    (error)=>{
+        return Promise.reject(error);
+    }
+)
 
 api.interceptors.response.use(
     (response) => response,

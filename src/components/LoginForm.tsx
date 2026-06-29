@@ -15,9 +15,10 @@ function LoginForm() {
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
 
     const handleHome= () =>{
-        navigate("/")
+        navigate("/home")
     }
 
     const handleGoogleLogin = () => {
@@ -32,32 +33,35 @@ function LoginForm() {
             ...prev,[name]: value,
         }));
     };    
-
     const handleSubmit = async (e: FormEvent) =>{
         
         e.preventDefault();
         setError('');
+        setLoading(true);
         const {email, password} = form;
 
 
         if(!email || !password){
             setError('Todos los campos obligatorios')
+            setLoading(false);
             return;
         }
         try {
             const res = await login({email,password});
             authLogin(res);
-            navigate('/')
+            navigate('/dashboard')
 
         } catch(err: unknown){
             const axiosErr = err as {response?: {data?: {message?: string; error?: string}}};
             const msg = axiosErr.response?.data?.message || axiosErr.response?.data?.error || 'Credenciales incorrectas';
             setError(msg)
+        } finally {
+            setLoading(false);
         }
     }
     return (
                 <div className="w-100 h-150 bg-transparent rounded-3xl border-2 border-transparent flex justify-center items-center">
-                    <form onSubmit = {handleSubmit} className="absolute left-0 top-0 w-[85%] max-w-4xl min-h-[85%]">
+                    <form onSubmit = {handleSubmit} className="absolute left-0 top-0 w-[85%] max-w-4xl min-h-[85%]" noValidate>
                         
                         <h1 className="mb-10 bloksy text-[#004aad] flex justify-center text-5xl">KINETICA</h1>
                         
@@ -145,13 +149,14 @@ function LoginForm() {
                             className="rubik mb-2 mt-4 w-full py-3 bg-[#004aad] rounded-xl text-[#f4ffff] hover:bg-[#3879d0] transiton active:scale-90 transition-transform duration-100"
                             onClick={handleSubmit}
                         >
-                            Iniciar Sesión
+                            {loading? <div className="loader-2"></div> :"Iniciar Sesión"}
+                            
                         </button> 
                         <button 
                             onClick={handleHome}
                             type="button" 
                             className="rubik text-xl font-bold text-[#004aad] hover:text-blue-400  active:scale-90 transition-all duration-100">
-                            Volver al Home
+                            {"<-Volver al Home"}
                         </button>              
                     </form>
 

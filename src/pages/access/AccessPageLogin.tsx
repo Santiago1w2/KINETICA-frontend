@@ -1,5 +1,5 @@
-import LoginForm from '../components/LoginForm'
-import {PresentLogin, PresentRegister} from '../components/Present'
+import LoginForm from '../../components/LoginForm'
+import {PresentLogin, PresentRegister} from '../../components/Present'
 
 function AccessPageLogin() {
         return (
