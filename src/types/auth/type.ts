@@ -5,14 +5,18 @@ export interface Credentials{
 export interface User {
     userId: number;
     email: string;
-    username:string;
-    accessToken: string;
-    refreshToken: string;
-    tokentype: string;
+    username: string;
+}
+
+export interface RegisterRequest {
+    email: string;
+    password: string;
+    username: string;
 }
 export interface AuthResponse{
     userId: number;
     email: string;
+    username: string;
     accessToken: string;
     refreshToken: string;
     tokentype: string;

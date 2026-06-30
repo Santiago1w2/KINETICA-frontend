@@ -14,11 +14,13 @@ export default function OAuthCallback() {
         const userId = params.get("userId");
         const email = params.get("email");
         const tokenType = params.get("tokenType");
+        const username = params.get("username");
 
         if (oauth === "success" && accessToken && refreshToken && userId) {
             login({
                 userId: Number(userId),
                 email: email || "",
+                username: username || "",
                 accessToken,
                 refreshToken,
                 tokentype: tokenType || "Bearer",

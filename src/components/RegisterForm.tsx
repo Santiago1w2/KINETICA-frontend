@@ -55,9 +55,8 @@ function RegisterForm() {
             return;
         }
         try {
-            const res = await register({email,password});
+            const res = await register({email,password,username});
             authLogin(res);
-            localStorage.setItem('username', username);
             navigate('/dashboard')
 
         } catch(err: unknown){
