@@ -1,149 +1,125 @@
-import { NavLink, useNavigate } from "react-router-dom";
-import HomeIcon from "../assets/icons/HomeIcon.js";
-import TextIcon from "../assets/icons/TextIcon.js";
-import SingIcon from "../assets/icons/SingIcon.js";
-import PerfilIcon from "../assets/icons/PerfilIcon.js";
-import LogoutIcon from "../assets/icons/LogoutIcon.js";
-import { useAuth } from "../hooks/useAuth.js";
+import { NavLink, useNavigate } from "react-router-dom"
+import HomeIcon from "../assets/icons/HomeIcon.js"
+import TextIcon from "../assets/icons/TextIcon.js"
+import SingIcon from "../assets/icons/SingIcon.js"
+import PerfilIcon from "../assets/icons/PerfilIcon.js"
+import LogoutIcon from "../assets/icons/LogoutIcon.js"
+import { useAuth } from "../hooks/useAuth.js"
+import { useState } from "react"
+import LoadingSpinner from "./LoadingSpinner"
+
 type PropsAcount = {
-    username: string | undefined;
-    email: string;
-    logout:()=>void;
+    username: string | undefined
+    email: string
+    logout: () => void
+    disabled?: boolean
 }
-function UserAccount({ username, email,logout }:PropsAcount) {
-  return (
-    <div className="w-full flex items-center gap-3  rounded-xl cursor-pointer transition">
-      {/* Avatar */}
-      <div className="font-nunito w-10 h-10 shrink-0 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold">
-        {username?.[0]?.toUpperCase()}
-      </div>
 
-      {/* Texts */}
-      <div className="flex flex-col min-w-0">
-        <span className="font-nunito text-sm font-medium truncate">{username}</span>
-        <span className="font-nunito text-xs text-slate-500 truncate">{email}</span>
+function UserAccount({ username, email, logout, disabled = false }: PropsAcount) {
+    return (
+        <div className="flex w-full items-center gap-3 rounded-xl transition">
+            <div className="font-nunito flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 font-semibold text-white">
+                {username?.[0]?.toUpperCase()}
+            </div>
 
-      </div>
-      <div className="hover:bg-slate-200 p-2 rounded-2xl active:scale-90 transition-all duration-100" onClick={logout}><LogoutIcon size={20}/></div>
-      
-    </div>
-  );
-}
-type PropsLogo = {
-    username: string;
-}
-function UserLogo({ username }: PropsLogo) {
-  return (
-    <div className="flex flex-col items-center justify-center gap-2 py-6">
-        
-      <div className="font-nunito w-20 h-20 rounded-full bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white font-bold text-3xl shadow-md">
-        {username?.[0]?.toUpperCase()}
-      </div>
+            <div className="flex min-w-0 flex-col">
+                <span className="font-nunito truncate text-sm font-medium">{username}</span>
+                <span className="font-nunito truncate text-xs text-slate-500">{email}</span>
+            </div>
 
-      <span className="font-poppins text-lg font-semibold text-slate-700 text-center truncate max-w-[200px] ">
-        {username} 
-      </span>
-    </div>
-  );
+            <button
+                type="button"
+                className="rounded-2xl p-2 transition-all duration-100 hover:bg-slate-200 active:scale-90"
+                onClick={logout}
+                disabled={disabled}
+                title="Cerrar sesion"
+            >
+                <LogoutIcon size={20} />
+            </button>
+        </div>
+    )
 }
+
+function UserLogo({ username }: { username: string }) {
+    return (
+        <div className="flex flex-col items-center justify-center gap-2 py-6">
+            <div className="font-nunito flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-700 text-3xl font-bold text-white shadow-md">
+                {username?.[0]?.toUpperCase()}
+            </div>
+
+            <span className="font-poppins max-w-[200px] truncate text-center text-lg font-semibold text-slate-700">
+                {username}
+            </span>
+        </div>
+    )
+}
+
+const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+    `flex items-center gap-2 rounded-xl px-4 py-2 transition ${
+        isActive
+            ? "bg-[#004aad] text-white"
+            : "text-slate-700 hover:bg-slate-100"
+    }`
 
 export default function Sidebar() {
-    const {logout, user } = useAuth();
-    const navigate = useNavigate();
+    const { logout, user } = useAuth()
+    const navigate = useNavigate()
+    const [loggingOut, setLoggingOut] = useState(false)
+
     const handleLogout = async () => {
-        await logout();
-        navigate("/home");
-    };
-  return (
-    <div className="flex min-h-screen bg-slate-100">
-      <aside className="w-64 h-screen sticky top-0 bg-white border-r border-slate-200 shadow-md flex flex-col">
-        
-        {/* HEADER */}
-        <div className="p-3">
-          <div className="flex justify-center py-2">
-            <h1 className="bloksy text-3xl font-bold text-[#004aad] tracking-wide">
-              KINETICA
-            </h1>
-          </div>
+        if (loggingOut) return
+        setLoggingOut(true)
+        try {
+            await logout()
+            navigate("/home")
+        } finally {
+            setLoggingOut(false)
+        }
+    }
 
-          <UserLogo username={user?.username || ""} />
-        </div>
+    return (
+        <aside className="flex h-screen w-64 flex-col border-r border-slate-200 bg-white shadow-md">
+            {loggingOut ? <LoadingSpinner message="Cerrando sesion..." /> : null}
+            <div className="p-3">
+                <div className="flex justify-center py-2">
+                    <h1 className="bloksy text-3xl font-bold tracking-wide text-[#004aad]">
+                        KINETICA
+                    </h1>
+                </div>
 
-        {/* NAV */}
-        <nav className="flex-1 px-2 flex flex-col gap-1">
-          <NavLink
-            to="/dashboard"
-            end
-            className={({ isActive }) =>
-              `flex items-center gap-2 px-4 py-2 rounded-xl transition ${
-                isActive
-                  ? "bg-[#004aad] text-white"
-                  : "text-slate-700 hover:bg-slate-100"
-              }`
-            }
-          >
-            <HomeIcon size={20} />
-            Home
-          </NavLink>
+                <UserLogo username={user?.username || ""} />
+            </div>
 
-          <NavLink
-            to="/dashboard/text-to-sing"
-            className={({ isActive }) =>
-              `flex items-center gap-2 px-4 py-2 rounded-xl transition ${
-                isActive
-                  ? "bg-[#004aad] text-white"
-                  : "text-slate-700 hover:bg-slate-100"
-              }`
-            }
-          >
-            <TextIcon size={20} />
-            Texto a seña
-          </NavLink>
+            <nav className="flex flex-1 flex-col gap-1 px-2">
+                <NavLink to="/dashboard" end className={navLinkClass}>
+                    <HomeIcon size={20} />
+                    Home
+                </NavLink>
 
-          <NavLink
-            to="/dashboard/sing-to-text"
-            className={({ isActive }) =>
-              `flex items-center gap-2 px-4 py-2 rounded-xl transition ${
-                isActive
-                  ? "bg-[#004aad] text-white"
-                  : "text-slate-700 hover:bg-slate-100"
-              }`
-            }
-          >
-            <SingIcon size={20} />
-            Seña a texto
-          </NavLink>
+                <NavLink to="/dashboard/sing-to-text" className={navLinkClass}>
+                    <SingIcon size={20} />
+                    Se&ntilde;a a texto
+                </NavLink>
 
-          <NavLink
-            to="/dashboard/perfil"
-            className={({ isActive }) =>
-              `flex items-center gap-2 px-4 py-2 rounded-xl transition ${
-                isActive
-                  ? "bg-[#004aad] text-white"
-                  : "text-slate-700 hover:bg-slate-100"
-              }`
-            }
-          >
-            <PerfilIcon size={20} />
-            Perfil
-          </NavLink>
-        </nav>
+                <NavLink to="/dashboard/text-to-sing" className={navLinkClass}>
+                    <TextIcon size={20} />
+                    Texto a se&ntilde;a
+                </NavLink>
 
-        <div className="mt-auto border-t border-slate-200 p-3 space-y-3">
-          
-          <UserAccount
-            username={user?.username ||""}
-            email={user?.email || ""}
-            logout={handleLogout}
-          />
+                <NavLink to="/dashboard/perfil" className={navLinkClass}>
+                    <PerfilIcon size={20} />
+                    Perfil
+                </NavLink>
+            </nav>
 
-          <div className="flex items-center justify-between text-xs text-slate-500 px-2">
-    
-
- 
-          </div>
-        </div>
-      </aside>
-    </div>
-  );
+            <div className="mt-auto space-y-3 border-t border-slate-200 p-3">
+                <UserAccount
+                    username={user?.username || ""}
+                    email={user?.email || ""}
+                    logout={handleLogout}
+                    disabled={loggingOut}
+                />
+            </div>
+        </aside>
+    )
 }

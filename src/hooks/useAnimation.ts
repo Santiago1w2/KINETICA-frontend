@@ -7,7 +7,7 @@ interface UseAnimationResult {
     error: string | null
 }
 
-export function useAnimation(animationId?: number): UseAnimationResult {
+export function useAnimation(): UseAnimationResult {
     const [signBase64, setSignBase64] = useState<string | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -17,7 +17,7 @@ export function useAnimation(animationId?: number): UseAnimationResult {
             try {
                 setLoading(true)
                 setError(null)
-                const data = await fetchAnimation(animationId)
+                const data = await fetchAnimation()
                 setSignBase64(data.glbBase64)
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'Failed to load animation')
@@ -27,7 +27,7 @@ export function useAnimation(animationId?: number): UseAnimationResult {
         }
 
         load()
-    }, [animationId])
+    }, [])
 
     return { signBase64, loading, error }
 }

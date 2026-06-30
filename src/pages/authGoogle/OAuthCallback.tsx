@@ -1,48 +1,47 @@
-import { useEffect } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
-import { getMe } from "../../services/AuthService";
+import { useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useAuth } from '../../hooks/useAuth'
+import { getMe } from '../../services/AuthService'
+import LoadingSpinner from '../../components/LoadingSpinner'
 
 export default function OAuthCallback() {
-    const navigate = useNavigate();
-    const [params] = useSearchParams();
-    const { login } = useAuth();
+    const navigate = useNavigate()
+    const [params] = useSearchParams()
+    const { login } = useAuth()
 
     useEffect(() => {
         const init = async () => {
             try {
-                const accessToken = params.get("accessToken");
-                const refreshToken = params.get("refreshToken");
+                const accessToken = params.get('accessToken')
+                const refreshToken = params.get('refreshToken')
 
                 if (!accessToken || !refreshToken) {
-                    navigate("/auth/error?error=oauth_failed");
-                    return;
+                    navigate('/auth/error?error=oauth_failed')
+                    return
                 }
 
-                localStorage.setItem("accessToken", accessToken);
-                localStorage.setItem("refreshToken", refreshToken);
+                localStorage.setItem('accessToken', accessToken)
+                localStorage.setItem('refreshToken', refreshToken)
 
-                const user = await getMe();
-                console.log(user.data)
+                const user = await getMe()
 
                 login({
-                    userId: user.userId,
+                    userId: user.userId ?? user.id ?? 0,
                     email: user.email,
                     username: user.username,
                     accessToken,
                     refreshToken,
-                    tokentype: "Bearer",
-                });
+                    tokentype: 'Bearer',
+                })
 
-                navigate("/dashboard");
-
-            } catch (err) {
-                navigate("/auth/error?error=oauth_failed");
+                navigate('/dashboard')
+            } catch {
+                navigate('/auth/error?error=oauth_failed')
             }
-        };
+        }
 
-        init();
-    }, []);
+        init()
+    }, [login, navigate, params])
 
-    return <p>Iniciando sesión...</p>;
+    return <LoadingSpinner message="Iniciando sesion..." />
 }
