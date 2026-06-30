@@ -21,6 +21,10 @@ export const register = async (data:RegisterRequest) => {
 }
 
 export const getGoogleOAuthUrl = () => {
-    return GOOGLE_OAUTH_URL || `${getBackendOrigin()}/oauth2/authorization/google`
+    return GOOGLE_OAUTH_URL;
 }
-
+export const getMe = async () => {
+    const response = await api.get("/auth/me");
+    
+    return response.data;
+}
