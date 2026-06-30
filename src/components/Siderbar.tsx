@@ -1,4 +1,4 @@
-import { NavLink, useActionData, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import HomeIcon from "../assets/icons/HomeIcon.js";
 import TextIcon from "../assets/icons/TextIcon.js";
 import SingIcon from "../assets/icons/SingIcon.js";

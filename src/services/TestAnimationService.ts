@@ -1,4 +1,4 @@
-import type { AnimationData } from '../types/type'
+import type { AnimationData } from '../types/animations/type'
 
 const TEST_ANIMS_URL = '/TestAnimations/animations.json'
 

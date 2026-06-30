@@ -1,8 +1,8 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import * as THREE from 'three'
 import { GLTFLoader, type GLTF } from 'three-stdlib'
-import { fetchSign, fetchSigns } from '../services/AnimationService'
-import type { SignResponse } from '../types/type'
+import { fetchSigns } from '../services/AnimationService'
+import type { SignResponse } from '../types/sings/type'
 
 interface SignEntry {
     sign: SignResponse

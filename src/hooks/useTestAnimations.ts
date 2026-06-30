@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback, useMemo } from 'react'
 import * as THREE from 'three'
 import { GLTFLoader, type GLTF } from 'three-stdlib'
 import { fetchTestAnimations } from '../services/TestAnimationService'
-import type { AnimationData } from '../types/type'
+import type { AnimationData } from '../types/animations/type'
 
 interface TestClipEntry {
     animation: AnimationData

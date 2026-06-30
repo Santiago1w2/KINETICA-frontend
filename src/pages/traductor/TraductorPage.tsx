@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { FiCamera, FiCornerDownRight, FiPlay, FiRefreshCw, FiStopCircle, FiUpload } from 'react-icons/fi'
+import { FiCamera, FiCornerDownRight, FiPlay, FiRefreshCw, FiStopCircle } from 'react-icons/fi'
 import { useMediaCamera } from '../../hooks/useMediaCamara'
 import { useVideoRecorder } from '../../hooks/useVideoRecorder'
 import { useTranslationFlow } from '../../hooks/useTranslationFlow'

@@ -32,17 +32,12 @@ const cornerBtnStyle: React.CSSProperties = {
   transition: 'all 0.15s',
 }
 
-function ModelCanvas({ activeClips, testClips, onClearTestSelection }: ModelCanvasProps): React.JSX.Element {
-  const [activeAnim, setActiveAnim] = useState<string | null>(null)
+function ModelCanvas({ activeClips, testClips }: ModelCanvasProps): React.JSX.Element {
+  const activeAnim = null
   const { signBase64 } = useAnimation()
   const boneFocusRef = useRef<BoneFocusHandle>(null!)
   const [speed, setSpeed] = useState<number>(1)
 
-
-  const toggle = (key: string) => {
-    onClearTestSelection?.()
-    setActiveAnim((prev) => (prev === key ? null : key))
-  }
 
   return (
     <div className="w-full h-full bg-[#020617] relative overflow-hidden rounded-xl">
