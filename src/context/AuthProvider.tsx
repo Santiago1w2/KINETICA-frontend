@@ -1,10 +1,12 @@
 import React, { type ReactNode, useEffect, useState } from 'react'
 import { AuthContext } from './AuthContext';
-import type { AuthResponse } from '../types/auth/type';
+import { type  User, type AuthResponse } from '../types/auth/type';
 import api from '../api/axios';
 
 export default function AuthProvider({children}:{children:ReactNode}) {
-    const[accessToken, setAccesToken] = useState<string | null>(null);
+    
+    const [user, setUser] = useState<User | null>(null);
+    const [accessToken, setAccesToken] = useState<string | null>(null);
     const [refreshToken, setRefreshToken] = useState<string | null> (null);
     const [loading, setLoading] = useState(true);
 
@@ -14,6 +16,7 @@ export default function AuthProvider({children}:{children:ReactNode}) {
             setAccesToken(savedToken);
         }
         setLoading(false);
+        //falta implementar la endpoint de sacar info del usuario
     },[])
 
     const login = (response: AuthResponse) => {
@@ -34,9 +37,11 @@ export default function AuthProvider({children}:{children:ReactNode}) {
             } catch {
             }
         }
+        
     }
+    const isAuthenticated = !!user?.accessToken;
     return (
-        <AuthContext.Provider value = {{accessToken,refreshToken,login,logout, loading}}>
+        <AuthContext.Provider value = {{accessToken,refreshToken,login,logout, loading, user,isAuthenticated}}>
             {children}
         </AuthContext.Provider>
     )

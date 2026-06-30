@@ -15,7 +15,7 @@ export default function OAuthCallback() {
         const email = params.get("email");
         const tokenType = params.get("tokenType");
 
-        if (oauth === "success" && accessToken && refreshToken) {
+        if (oauth === "success" && accessToken && refreshToken && userId) {
             login({
                 userId: Number(userId),
                 email: email || "",
@@ -23,11 +23,11 @@ export default function OAuthCallback() {
                 refreshToken,
                 tokentype: tokenType || "Bearer",
             });
-            navigate("/");
+            navigate("/dashboard");
         } else {
             navigate("/auth/error?error=oauth_failed");
         }
-    }, []);
+    }, [params,login,navigate]);
 
     return <p>Iniciando sesión...</p>;
 }

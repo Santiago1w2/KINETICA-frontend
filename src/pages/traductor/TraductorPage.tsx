@@ -49,7 +49,7 @@ export default function TraductorPage() {
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                     <div>
                         <p className="rubik text-sm uppercase tracking-[0.22em] text-[#004aad]">Traductor</p>
-                        <h1 className="bloksy mt-1 text-4xl text-slate-950 sm:text-5xl">Video a texto</h1>
+                        <h1 className="bloksy mt-1 text-4xl text-slate-950 sm:text-5xl">Seña a texto</h1>
                     </div>
                 </div>
             </div>

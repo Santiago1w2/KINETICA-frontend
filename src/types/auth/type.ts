@@ -2,7 +2,14 @@ export interface Credentials{
     email: string;
     password: string;
 }
-
+export interface User {
+    userId: number;
+    email: string;
+    username:string;
+    accessToken: string;
+    refreshToken: string;
+    tokentype: string;
+}
 export interface AuthResponse{
     userId: number;
     email: string;

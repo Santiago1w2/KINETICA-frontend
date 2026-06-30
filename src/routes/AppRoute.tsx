@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 import AccessPageLogin from '../pages/access/AccessPageLogin';
 import AccessPageRegister from '../pages/access/AccessPageRegister';
 import HomePage from '../pages/home/HomePage';
@@ -13,8 +13,15 @@ import DashboardLayout from '../layouts/DashboardLayout';
 import TextToSing from '../pages/traductor/TextToSing';
 import SingToText from '../pages/traductor/SingToText';
 import PerfilPage from '../pages/traductor/PerfilPage';
+import HomeTraductorPage from '../pages/traductor/HomeTraductorPage';
+import ProtectedRoute from './ProtectedRoute';
 
 const router = createBrowserRouter([
+
+        {
+        path: "/",
+        element: <Navigate to="/home" replace />,
+    },
 {
     path: "/home",
     element: <MainLayout />,
@@ -33,32 +40,33 @@ const router = createBrowserRouter([
             },
         ],
     },
-    {
-        path: "/dashboard",
-        element: <DashboardLayout />,
-        children: [
-            {
-                index: true,
-                element: <TraductorPage />,
-            },
-            {
-                path: "text-to-sing",
-                element: <TextToSing />,
-            },
-            {
-                path: "sing-to-text",
-                element: <SingToText />,
-            },
-            {
-                path: "perfil",
-                element: <PerfilPage />,
-            },
-        ],
-    },
-    {     
-        path: '/traductor',
-        element: <TraductorPage />,
-    },
+{
+    element: <ProtectedRoute />,
+    children: [
+        {
+            path: "/dashboard",
+            element: <DashboardLayout />,
+            children: [
+                {
+                    index: true,
+                    element: <HomeTraductorPage />,
+                },
+                {
+                    path: "text-to-sing",
+                    element: <TextToSing />,
+                },
+                {
+                    path: "sing-to-text",
+                    element: <TraductorPage />,
+                },
+                {
+                    path: "perfil",
+                    element: <PerfilPage />,
+                },
+            ],
+        },
+    ],
+},
     {
         path: "/auth/login",
         element: <AccessPageLogin />,

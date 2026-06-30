@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap');
 @font-face {
   font-family: "BloksyOne";
   src: url("../src/fonts/Bloksy\ One.ttf") format("truetype");
@@ -7,7 +7,21 @@
   font-style: normal;
 }
 /*Prueba animaciones*/
+.font-poppins {
+    font-family: "Poppins", sans-serif;
+}
 
+.font-nunito {
+    font-family: "Nunito", sans-serif;
+}
+
+.font-quicksand {
+    font-family: "Quicksand", sans-serif;
+}
+
+.font-manrope {
+    font-family: "Manrope", sans-serif;
+}
 .box {
     position: absolute;
 
