@@ -6,7 +6,7 @@ import PerfilIcon from "../assets/icons/PerfilIcon.js";
 import LogoutIcon from "../assets/icons/LogoutIcon.js";
 import { useAuth } from "../hooks/useAuth.js";
 type PropsAcount = {
-    username: string;
+    username: string | undefined;
     email: string;
     logout:()=>void;
 }
@@ -48,7 +48,7 @@ function UserLogo({ username }: PropsLogo) {
 }
 
 export default function Sidebar() {
-    const {logout } = useAuth();
+    const {logout, user } = useAuth();
     const navigate = useNavigate();
     const handleLogout = async () => {
         await logout();
@@ -66,7 +66,7 @@ export default function Sidebar() {
             </h1>
           </div>
 
-          <UserLogo username="Santiago Morales Portella" />
+          <UserLogo username={user?.username || ""} />
         </div>
 
         {/* NAV */}
@@ -132,8 +132,8 @@ export default function Sidebar() {
         <div className="mt-auto border-t border-slate-200 p-3 space-y-3">
           
           <UserAccount
-            username="Santiago Cesar Morales Portella"
-            email="santiago.morales@utec.edu.pe"
+            username={user?.username ||""}
+            email={user?.email || ""}
             logout={handleLogout}
           />
 
