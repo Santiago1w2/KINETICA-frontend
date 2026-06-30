@@ -30,7 +30,7 @@ export default function OAuthCallback() {
         } else {
             navigate("/auth/error?error=oauth_failed");
         }
-    }, [params,login,navigate]);
+    }, []);
 
     return <p>Iniciando sesión...</p>;
 }
