@@ -15,10 +15,11 @@ export default function OAuthCallback() {
         const email = params.get("email");
         const tokenType = params.get("tokenType");
         const username = params.get("username");
+        const parsedUserId = Number(userId);
 
-        if (oauth === "success" && accessToken && refreshToken && userId) {
+        if (oauth === "success" && accessToken && refreshToken && userId && Number.isFinite(parsedUserId)) {
             login({
-                userId: Number(userId),
+                userId: parsedUserId,
                 email: email || "",
                 username: username || "",
                 accessToken,

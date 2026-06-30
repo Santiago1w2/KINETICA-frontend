@@ -1,6 +1,6 @@
 import React,{useState, type FormEvent} from 'react'
 import { FcGoogle } from "react-icons/fc";
-import { login} from "../services/AuthService"
+import { getGoogleOAuthUrl, login } from "../services/AuthService"
 import type { Credentials } from '../types/auth/type';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
@@ -22,7 +22,7 @@ function LoginForm() {
     }
 
     const handleGoogleLogin = () => {
-    window.location.href = "http://localhost:8080/oauth2/authorization/google";
+    window.location.href = getGoogleOAuthUrl();
     };
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement>

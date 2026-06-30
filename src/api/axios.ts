@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const BASE_URL = '/api/v1'
+const BASE_URL = import.meta.env.VITE_API_URL ?? '/api/v1'
 
 const api = axios.create({
     baseURL: BASE_URL,
@@ -42,6 +42,9 @@ api.interceptors.response.use(
                     `${BASE_URL}/auth/refresh`,
                     {
                         refreshToken
+                    },
+                    {
+                        withCredentials: true
                     }
                 );
 
@@ -65,6 +68,9 @@ api.interceptors.response.use(
 
                 localStorage.removeItem("accessToken");
                 localStorage.removeItem("refreshToken");
+                localStorage.removeItem("userId");
+                localStorage.removeItem("email");
+                localStorage.removeItem("username");
 
                 window.location.href = "/auth/login";
 
