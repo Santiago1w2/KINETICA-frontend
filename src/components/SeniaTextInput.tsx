@@ -28,7 +28,7 @@ export default function SeniaTextInput({ onTranslate, loading = false }: SignTex
                 <textarea
                     value={text}
                     onChange={(e) => setText(e.target.value)}
-                    placeholder="Escribe una frase aqui para verla en senas..."
+                    placeholder="Escribe una frase aqui para verla en señas..."
                     className="h-32 w-full resize-none rounded-xl border-none bg-slate-50 p-4 text-slate-800 outline-none transition-all placeholder:text-slate-400 focus:ring-2 focus:ring-blue-100"
                 />
             </div>

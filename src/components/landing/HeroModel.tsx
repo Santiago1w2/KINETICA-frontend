@@ -5,11 +5,11 @@ import { Model } from '../3DModel/Model'
 function HeroModel() {
   return (
     <div className="hero-model-container">
-      <Canvas camera={{ position: [0, 1.5, 7], fov: 40 }} gl={{ alpha: true }}>
+      <Canvas camera={{ position: [0, 1.5, 15], fov: 30 }} gl={{ alpha: true }}>
         <ambientLight intensity={2} />
         <directionalLight position={[4, 6, 6]} intensity={2.5} />
-        <group position={[0, -0.9, 0]} scale={1.15}>
-          <Model />
+        <group position={[0, -0.9, 0]} scale={0.95}>
+          <Model timeScale={0.5} />
         </group>
         <OrbitControls
           enableZoom={false}

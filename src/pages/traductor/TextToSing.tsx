@@ -141,7 +141,7 @@ function TextToSing() {
 
             setStatus('Traduccion lista.')
         } catch (err) {
-            setError(err instanceof Error ? err.message : 'Error traduciendo texto a senas.')
+            setError(err instanceof Error ? err.message : 'Error traduciendo texto a señas.')
             setStatus('No se pudo completar la traduccion.')
         } finally {
             setLoadingTranslation(false)

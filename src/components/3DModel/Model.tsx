@@ -78,7 +78,10 @@ export function Model({ activeAnim = null, activeClips, signBase64 = null, testC
     }
 
     if (entranceClip) {
-      entranceClip.reset().play()
+      entranceClip.reset()
+      entranceClip.loop = THREE.LoopOnce
+      entranceClip.clampWhenFinished = true
+      entranceClip.play()
       entranceClip.timeScale = timeScale
       entrancePlayed.current = true
 
