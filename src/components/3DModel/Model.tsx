@@ -3,6 +3,7 @@ import React from 'react'
 import { useGraph } from '@react-three/fiber'
 import { useGLTF, useAnimations } from '@react-three/drei'
 import { type GLTF, SkeletonUtils, GLTFLoader } from 'three-stdlib'
+import { getAnimationClipsByName } from '../../services/animationLoader'
 
 
 type GLTFResult = GLTF & {
@@ -33,21 +34,72 @@ function useSignClips(signBase64: string | null): THREE.AnimationClip[] {
   return clips
 }
 
+const BUILTIN_NAMES = ['SaludoEM', 'Suspendido']
+
 export function Model({ activeAnim = null, activeClips, signBase64 = null, testClips = [], timeScale = 1, ...props }: ModelProps) {
   const group = React.useRef<THREE.Group>(null!)
   const { scene, animations: mainAnims } = useGLTF('/chullov1.1-transformed.glb')
 
   const signClips = useSignClips(signBase64)
+  const [builtinClips, setBuiltinClips] = React.useState<THREE.AnimationClip[]>([])
+
+  React.useEffect(() => {
+    let cancelled = false
+    getAnimationClipsByName(BUILTIN_NAMES).then((clips) => {
+      if (!cancelled) setBuiltinClips(clips)
+    })
+    return () => { cancelled = true }
+  }, [])
 
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene])
   const { nodes } = useGraph(clone) as unknown as GLTFResult
   const allClips = React.useMemo(
-    () => [...mainAnims, ...signClips, ...testClips],
-    [mainAnims, signClips, testClips],
+    () => [...mainAnims, ...signClips, ...testClips, ...builtinClips],
+    [mainAnims, signClips, testClips, builtinClips],
   )
   const { actions } = useAnimations(allClips, group)
 
+  const hasUserAnim = activeAnim !== null || (activeClips !== undefined && activeClips.length > 0)
+  const entrancePlayed = React.useRef(false)
+
   React.useEffect(() => {
+    if (hasUserAnim) return
+
+    const entranceClip = actions['SaludoEM']
+    const idleClip = actions['Suspendido']
+    if (!entranceClip && !idleClip) return
+
+    if (entrancePlayed.current) {
+      if (idleClip && !idleClip.isRunning()) {
+        idleClip.reset().play()
+        idleClip.timeScale = timeScale
+      }
+      return
+    }
+
+    if (entranceClip) {
+      entranceClip.reset().play()
+      entranceClip.timeScale = timeScale
+      entrancePlayed.current = true
+
+      const mixer = entranceClip.getMixer()
+      const onFinished = () => {
+        if (idleClip) {
+          idleClip.reset().play()
+          idleClip.timeScale = timeScale
+        }
+      }
+      mixer.addEventListener('finished', onFinished)
+      return () => mixer.removeEventListener('finished', onFinished)
+    } else if (idleClip) {
+      idleClip.reset().play()
+      idleClip.timeScale = timeScale
+      entrancePlayed.current = true
+    }
+  }, [actions, hasUserAnim, timeScale])
+
+  React.useEffect(() => {
+    if (!hasUserAnim) return
     Object.values(actions).forEach((a) => a?.fadeOut(0.3))
 
     const names = activeClips && activeClips.length > 0
@@ -60,7 +112,7 @@ export function Model({ activeAnim = null, activeClips, signBase64 = null, testC
         actions[name]!.timeScale = timeScale
       }
     })
-  }, [activeAnim, activeClips, actions])
+  }, [activeAnim, activeClips, actions, hasUserAnim, timeScale])
 
   React.useEffect(() => {
     Object.values(actions).forEach((action) => {

@@ -1,5 +1,9 @@
 export interface SignResponse {
     id: number;
     label: string;
-    animationSrc?: string;
+    normalizedLabel: string;
+    mediaRef: string;
+    locale: string;
+    active: boolean;
+    animationSrc: string | null;
 }

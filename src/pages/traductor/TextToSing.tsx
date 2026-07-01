@@ -1,21 +1,21 @@
 
 import AnimationList from '../../components/AnimationList'
-import { useTestAnimations } from '../../hooks/useTestAnimations'
+import { useSigns } from '../../hooks/useSigns'
 import SeniaTextInput from '../../components/SeniaTextInput'
 import ModelCanvas from '../../components/3DModel/ModelCanvas'
 
 function TextToSing() {
   const {
         entries,
-        loading: testLoading,
-        selectedName,
+        loading: signsLoading,
+        selectedLabel: selectedName,
         selectedClipNames,
-        select: testSelect,
+        select: signSelect,
         playAll,
         stopAll,
         isPlayingAll,
         allClips,
-    } = useTestAnimations()
+    } = useSigns()
 
 
 
@@ -41,7 +41,7 @@ function TextToSing() {
                 <ModelCanvas
                     activeClips={selectedClipNames}
                     testClips={allClips}
-                    onClearTestSelection={() => testSelect(null)}
+                    onClearTestSelection={() => signSelect(null)}
                 />
             </div>
 
@@ -56,13 +56,13 @@ function TextToSing() {
          
                 <div className="flex-1">
                     <AnimationList
-                        animations={entries.map((e) => e.animation)}
+                        animations={entries.map((e) => ({ name: e.sign.label }))}
                         selectedName={selectedName}
-                        onSelect={(name) => testSelect(name)}
+                        onSelect={(name) => signSelect(name)}
                         onPlayAll={playAll}
                         onStopAll={stopAll}
                         isPlayingAll={isPlayingAll}
-                        loading={testLoading}
+                        loading={signsLoading}
                     />
                 </div>
             </div>

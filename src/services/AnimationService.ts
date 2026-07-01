@@ -1,9 +1,8 @@
 import api from '../api/axios'
-import type { AnimationResponse } from '../types/animations/type'
 import type { SignResponse } from '../types/sings/type'
 
-export const fetchAnimation = async (id?: number) => {
-    const response = await api.get<AnimationResponse>(`/animations${id ? `/${id}` : '/latest'}`)
+export const fetchAllSigns = async (): Promise<SignResponse[]> => {
+    const response = await api.get<SignResponse[]>('/signs')
     return response.data
 }
 
