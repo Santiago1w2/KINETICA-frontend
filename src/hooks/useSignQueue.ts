@@ -22,6 +22,7 @@ interface UseSignQueueResult {
     playSequence: (labels: string[]) => void
     stop: () => void
     isPlaying: boolean
+    signLabels: string[]
 }
 
 function extractBase64(src: string): string {
@@ -102,15 +103,9 @@ export function useSignQueue(): UseSignQueueResult {
             const signs = await fetchSigns()
             if (cancelledRef.current) return
 
-            const filteredSigns = signs.filter((sign) => {
-                const keys = [
-                    sign.label,
-                    sign.name,
-                    sign.gloss,
-                ].map((value) => normalizeSignKey(value ?? ''))
-
-                return keys.some((key) => normalizedLabels.includes(key))
-            })
+            const filteredSigns = signs.filter((sign) =>
+                normalizedLabels.includes(normalizeSignKey(sign.label ?? ''))
+            )
 
             const processed = await processSigns(filteredSigns)
             if (cancelledRef.current) return
@@ -207,6 +202,11 @@ export function useSignQueue(): UseSignQueueResult {
         return () => clearTimeout(timer)
     }, [playIdx, playQueue, entryDuration])
 
+    const signLabels = useMemo(
+        () => entries.filter((e) => e.clips.length > 0).map((e) => e.sign.label),
+        [entries]
+    )
+
     return {
         entries,
         loading,
@@ -214,6 +214,7 @@ export function useSignQueue(): UseSignQueueResult {
         selectedLabel,
         selectedClipNames,
         allClips,
+        signLabels,
         select,
         loadByIds,
         loadByLabels,

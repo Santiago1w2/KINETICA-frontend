@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { GLTFLoader, type GLTF } from 'three-stdlib'
 import { fetchAllSigns } from '../services/AnimationService'
@@ -20,6 +20,7 @@ interface UseSignsResult {
     stopAll: () => void
     isPlayingAll: boolean
     allClips: THREE.AnimationClip[]
+    reload: () => void
 }
 
 function extractBase64(src: string): string {
@@ -46,39 +47,39 @@ export function useSigns(): UseSignsResult {
     const [error, setError] = useState<string | null>(null)
     const [selectedLabel, setSelectedLabel] = useState<string | null>(null)
     const [playQueueIdx, setPlayQueueIdx] = useState<number>(-1)
+    const cancelRef = useRef(false)
+
+    const load = useCallback(async () => {
+        cancelRef.current = false
+        try {
+            setLoading(true)
+            setError(null)
+            const signs = await fetchAllSigns()
+            if (cancelRef.current) return
+
+            const decoded: SignEntry[] = []
+            for (const sign of signs) {
+                try {
+                    const clips = sign.animationSrc
+                        ? await decodeAnimationSrc(sign.animationSrc)
+                        : []
+                    decoded.push({ sign, clips })
+                } catch {
+                    decoded.push({ sign, clips: [] })
+                }
+            }
+            if (!cancelRef.current) setEntries(decoded)
+        } catch (err) {
+            if (!cancelRef.current) setError(err instanceof Error ? err.message : 'Failed to load signs')
+        } finally {
+            if (!cancelRef.current) setLoading(false)
+        }
+    }, [])
 
     useEffect(() => {
-        let cancelled = false
-
-        const load = async () => {
-            try {
-                setLoading(true)
-                setError(null)
-                const signs = await fetchAllSigns()
-                if (cancelled) return
-
-                const decoded: SignEntry[] = []
-                for (const sign of signs) {
-                    try {
-                        const clips = sign.animationSrc
-                            ? await decodeAnimationSrc(sign.animationSrc)
-                            : []
-                        decoded.push({ sign, clips })
-                    } catch {
-                        decoded.push({ sign, clips: [] })
-                    }
-                }
-                if (!cancelled) setEntries(decoded)
-            } catch (err) {
-                if (!cancelled) setError(err instanceof Error ? err.message : 'Failed to load signs')
-            } finally {
-                if (!cancelled) setLoading(false)
-            }
-        }
-
         load()
-        return () => { cancelled = true }
-    }, [])
+        return () => { cancelRef.current = true }
+    }, [load])
 
     const activeEntryLabels = useMemo(
         () => entries.filter((e) => e.clips.length > 0).map((e) => e.sign.label),
@@ -158,10 +159,15 @@ export function useSigns(): UseSignsResult {
         return () => clearTimeout(timer)
     }, [playQueueIdx, activeEntryLabels, entryDuration])
 
+    const reload = useCallback(() => {
+        load()
+    }, [load])
+
     return {
         entries, loading, error,
         selectedLabel, selectedClipNames,
         select, playAll, stopAll, isPlayingAll,
         allClips,
+        reload,
     }
 }

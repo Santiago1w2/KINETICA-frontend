@@ -1,4 +1,6 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
+import * as THREE from 'three'
+import { GLTFLoader } from 'three-stdlib'
 import AnimationList from '../../components/AnimationList'
 import { useSigns } from '../../hooks/useSigns'
 import SeniaTextInput from '../../components/SeniaTextInput'
@@ -6,7 +8,6 @@ import ModelCanvas from '../../components/3DModel/ModelCanvas'
 import { createTranslation, pollTranslation } from '../../services/translationService'
 import { useSignQueue } from '../../hooks/useSignQueue'
 import type { TranslationResponse } from '../../types/translator/type'
-import LoadingSpinner from '../../components/LoadingSpinner'
 
 function parseNumberList(value: string) {
     const parts = value
@@ -44,21 +45,58 @@ function TextToSing() {
     const [status, setStatus] = useState('Escribe un texto para traducirlo a senas.')
     const [error, setError] = useState('')
     const [loadingTranslation, setLoadingTranslation] = useState(false)
-    const [loadingMessage, setLoadingMessage] = useState('Generando glosas...')
     const [translationResult, setTranslationResult] = useState<TranslationResponse | null>(null)
     const [shouldPlayLoadedSigns, setShouldPlayLoadedSigns] = useState(false)
+    const [base64Input, setBase64Input] = useState('')
+    const [customClips, setCustomClips] = useState<THREE.AnimationClip[]>([])
+    const [customClipNames, setCustomClipNames] = useState<string[]>([])
+    const [customClipError, setCustomClipError] = useState('')
+
+    const handleSendBase64 = useCallback(async () => {
+        const raw = base64Input.trim()
+        if (!raw) return
+        setCustomClipError('')
+        setCustomClips([])
+        setCustomClipNames([])
+        try {
+            const commaIdx = raw.indexOf(',')
+            const base64 = commaIdx !== -1 ? raw.slice(commaIdx + 1) : raw
+            const binaryString = atob(base64)
+            const bytes = new Uint8Array(binaryString.length)
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i)
+            }
+            const gltf = await new Promise<THREE.AnimationClip[]>((resolve, reject) => {
+                new GLTFLoader().parse(bytes.buffer, '', (gl) => resolve(gl.animations), reject)
+            })
+            setCustomClips(gltf)
+            setCustomClipNames(gltf.map((c) => c.name))
+        } catch (err) {
+            setCustomClipError(err instanceof Error ? err.message : 'Error decodificando base64')
+        }
+    }, [base64Input])
 
     const {
         entries,
         loading: signsLoading,
-        selectedLabel: selectedName,
         selectedClipNames,
-        select: signSelect,
-        playAll,
-        stopAll,
-        isPlayingAll,
         allClips,
+        reload: reloadSigns,
     } = useSigns()
+
+    const {
+        entries: queueEntries,
+        loading: queueLoading,
+        error: signsError,
+        selectedLabel,
+        playSequence,
+        stop,
+        loadByIds,
+        loadByLabels,
+        isPlaying,
+        select,
+        signLabels,
+    } = useSignQueue()
 
     useEffect(() => {
         if (!shouldPlayLoadedSigns || signLabels.length === 0) return
@@ -74,7 +112,6 @@ function TextToSing() {
         setError('')
         setTranslationResult(null)
         stop()
-        setLoadingMessage('Generando glosas...')
         setStatus('Enviando texto al backend...')
 
         try {
@@ -88,7 +125,6 @@ function TextToSing() {
             const ids = parseNumberList(signRef)
 
             if (ids.length > 0) {
-                setLoadingMessage('Preparando animacion...')
                 setStatus('Cargando senas por id...')
                 await loadByIds(ids)
                 setShouldPlayLoadedSigns(true)
@@ -98,7 +134,6 @@ function TextToSing() {
                     throw new Error('El backend no devolvio glosas o referencias de senas.')
                 }
 
-                setLoadingMessage('Preparando animacion...')
                 setStatus('Cargando senas por glosa...')
                 await loadByLabels(labels)
                 setShouldPlayLoadedSigns(true)
@@ -133,33 +168,13 @@ function TextToSing() {
             {/* Sección del Modelo 3D */}
             <div className="w-[90vw] md:w-[65vw] aspect-[16/9] md:aspect-[21/9] relative rounded-3xl overflow-hidden z-10 bg-slate-900 shadow-2xl mt-8">
                 <ModelCanvas
-                    activeClips={selectedClipNames}
-                    testClips={allClips}
-                    onClearTestSelection={() => signSelect(null)}
+                    activeClips={customClipNames.length > 0 ? customClipNames : selectedClipNames}
+                    testClips={customClips.length > 0 ? customClips : allClips}
                 />
             </div>
 
      
-            <div className="w-[90vw] md:w-[75vw] flex flex-col md:flex-row gap-6 mt-10 mb-20 z-10">
-                
-         
-                <div className="flex-1">
-                    <SeniaTextInput onTranslate={(t) => console.log("Padre recibió:", t)} />
-                </div>
-
-         
-                <div className="flex-1">
-                    <AnimationList
-                        animations={entries.map((e) => ({ name: e.sign.label }))}
-                        selectedName={selectedName}
-                        onSelect={(name) => signSelect(name)}
-                        onPlayAll={playAll}
-                        onStopAll={stopAll}
-                        isPlayingAll={isPlayingAll}
-                        loading={signsLoading}
-                    />
-                </div>
-
+            <div className="w-[90vw] md:w-[75vw] mt-10 mb-20 z-10">
                 <div className="grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
                     <SeniaTextInput onTranslate={handleTranslate} loading={loadingTranslation || signsLoading} />
 
@@ -172,12 +187,12 @@ function TextToSing() {
                                 </p>
                             </div>
                             <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-[#004aad]">
-                                {isPlaying ? 'Reproduciendo' : `${entries.length} senas`}
+                                {isPlaying ? 'Reproduciendo' : `${queueEntries.length} senas`}
                             </span>
                         </div>
 
                         <AnimationList
-                            animations={entries.map((entry) => ({
+                            animations={queueEntries.map((entry) => ({
                                 name: entry.sign.label,
                                 base64: entry.sign.animationSrc ?? '',
                             }))}
@@ -186,7 +201,7 @@ function TextToSing() {
                             onPlayAll={() => playSequence(signLabels)}
                             onStopAll={stop}
                             isPlayingAll={isPlaying}
-                            loading={signsLoading}
+                            loading={queueLoading}
                         />
 
                         <div className="rounded-xl bg-slate-50 p-4 ring-1 ring-slate-200">
@@ -207,8 +222,72 @@ function TextToSing() {
                             ) : null}
                         </div>
                     </div>
+
+                    <hr className="my-5 border-slate-200" />
+
+                    <div>
+                        <h2 className="rubik text-base font-semibold text-slate-900 mb-3">Depurar animacion</h2>
+                        <div className="relative">
+                            <textarea
+                                className="rubik w-full rounded-xl border border-slate-300 bg-slate-50 p-3 pb-12 text-sm text-slate-800 placeholder:text-slate-400 focus:border-[#004aad] focus:outline-none focus:ring-2 focus:ring-[#004aad]/20 resize-y"
+                                rows={4}
+                                placeholder="Pega el base64 de la animacion aqui..."
+                                value={base64Input}
+                                onChange={(e) => setBase64Input(e.target.value)}
+                            />
+                            <button
+                                onClick={handleSendBase64}
+                                className="absolute bottom-2 right-2 rounded-xl bg-[#004aad] px-5 py-1.5 text-sm font-semibold text-white hover:bg-[#003a8a] transition"
+                            >
+                                Enviar
+                            </button>
+                        </div>
+                        <div className="mt-3 flex items-center gap-3">
+                            {customClips.length > 0 && (
+                                <span className="rubik text-sm text-emerald-600">
+                                    {customClips.length} clip(s) cargados
+                                </span>
+                            )}
+                            {customClipError && (
+                                <span className="rubik text-sm text-rose-600">{customClipError}</span>
+                            )}
+                        </div>
+                    </div>
                 </div>
-            </section>
+                </div>
+
+            <div className="w-[90vw] md:w-[75vw] mx-auto mt-8 mb-20 z-10">
+                <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-slate-200">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2">
+                            <h2 className="rubik text-lg font-semibold text-slate-900">Todas las senas</h2>
+                            <button
+                                onClick={reloadSigns}
+                                className="rounded-lg border border-slate-300 bg-slate-50 px-2 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100 transition"
+                            >
+                                Recargar
+                            </button>
+                        </div>
+                        {signsLoading && (
+                            <span className="rubik text-xs text-slate-400">Cargando...</span>
+                        )}
+                    </div>
+                    {!signsLoading && entries.length === 0 ? (
+                        <p className="rubik text-sm text-slate-500">No se encontraron senas.</p>
+                    ) : (
+                        <div className="flex flex-wrap gap-2">
+                            {entries.map(({ sign }) => (
+                                <div
+                                    key={sign.id}
+                                    className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-medium text-slate-700"
+                                >
+                                    {sign.label}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
         </main>
     )
 }

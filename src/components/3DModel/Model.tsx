@@ -98,20 +98,53 @@ export function Model({ activeAnim = null, activeClips, signBase64 = null, testC
     }
   }, [actions, hasUserAnim, timeScale])
 
+  const seqIdxRef = React.useRef(0)
+  const seqCleanupRef = React.useRef<(() => void) | null>(null)
+
   React.useEffect(() => {
     if (!hasUserAnim) return
-    Object.values(actions).forEach((a) => a?.fadeOut(0.3))
+
+    seqCleanupRef.current?.()
+    seqCleanupRef.current = null
+    seqIdxRef.current = 0
+
+    Object.values(actions).forEach((a) => a?.stop())
 
     const names = activeClips && activeClips.length > 0
       ? activeClips
       : (activeAnim ? [activeAnim] : [])
 
-    names.forEach((name) => {
-      if (actions[name]) {
-        actions[name]!.reset().play()
-        actions[name]!.timeScale = timeScale
-      }
-    })
+    if (names.length === 0) return
+
+    const mixer = actions[names[0]]?.getMixer()
+    if (!mixer) return
+
+    const playNext = () => {
+      const idx = seqIdxRef.current
+      if (idx >= names.length) return
+
+      const name = names[idx]
+      const action = actions[name]
+      if (!action) return
+
+      action.reset()
+      action.loop = THREE.LoopOnce
+      action.clampWhenFinished = true
+      action.play()
+      action.timeScale = timeScale
+    }
+
+    const onFinished = () => {
+      seqIdxRef.current++
+      playNext()
+    }
+
+    mixer.addEventListener('finished', onFinished)
+    seqCleanupRef.current = () => {
+      mixer.removeEventListener('finished', onFinished)
+    }
+
+    playNext()
   }, [activeAnim, activeClips, actions, hasUserAnim, timeScale])
 
   React.useEffect(() => {
