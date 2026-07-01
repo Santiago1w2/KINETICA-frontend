@@ -11,9 +11,9 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
-      '/api': 'http://44.214.92.196:8080',
-      '/oauth2': 'http://44.214.92.196:8080',
-      '/login': 'http://44.214.92.196:8080',
+      '/api': 'https://44.214.92.196:8080',
+      '/oauth2': 'https://44.214.92.196:8080',
+      '/login': 'https://44.214.92.196:8080',
     }
   }
 })
