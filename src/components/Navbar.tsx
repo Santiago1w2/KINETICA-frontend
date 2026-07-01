@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { FiMenu, FiX } from 'react-icons/fi'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+import LoadingSpinner from './LoadingSpinner'
 
 const navItems = [
   { label: 'Inicio', href: '/home#inicio' },
@@ -18,6 +19,7 @@ function Navbar() {
   const location = useLocation()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+  const [loggingOut, setLoggingOut] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20)
@@ -36,9 +38,15 @@ function Navbar() {
     return () => window.clearTimeout(id)
   }, [location])
 
-  const handleLogout = () => {
-    logout()
-    navigate('/auth/login')
+  const handleLogout = async () => {
+    if (loggingOut) return
+    setLoggingOut(true)
+    try {
+      await logout()
+      navigate('/auth/login')
+    } finally {
+      setLoggingOut(false)
+    }
   }
 
   const handleAnchorClick = (href: string) => {
@@ -57,6 +65,7 @@ function Navbar() {
           : 'border-[#3C8AF2]/25 bg-[#004AAD]/90 shadow-[0_18px_55px_rgba(0,74,173,0.16)] backdrop-blur-xl'
       }`}
     >
+      {loggingOut && <LoadingSpinner message="Cerrando sesion..." />}
       <div className="flex items-center justify-between gap-4">
         <Link
           to="/home#inicio"
@@ -91,6 +100,7 @@ function Navbar() {
               </Link>
               <button
                 onClick={handleLogout}
+                disabled={loggingOut}
                 className="rounded-full bg-white px-4 py-2 text-sm font-bold text-[#004AAD] transition-colors hover:bg-[#3C8AF2] hover:text-white"
               >
                 Cerrar sesion
@@ -148,6 +158,7 @@ function Navbar() {
               <button
                 type="button"
                 onClick={handleLogout}
+                disabled={loggingOut}
                 className="rounded-2xl bg-white px-3 py-2 text-left text-sm font-bold text-[#004AAD] hover:bg-[#3C8AF2] hover:text-white"
               >
                 Cerrar sesion

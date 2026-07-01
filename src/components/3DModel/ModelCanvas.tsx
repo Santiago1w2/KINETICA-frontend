@@ -3,7 +3,6 @@ import React, { useRef, useState } from 'react'
 import * as THREE from 'three'
 import { Model } from './Model'
 import { OrbitControls } from '@react-three/drei'
-import { useAnimation } from '../../hooks/useAnimation'
 import BoneFocus from './BoneFocus'
 import type { BoneFocusHandle } from './BoneFocus'
 import AnimationSpeedSlider from './AnimationSpeedSlider'
@@ -34,7 +33,6 @@ const cornerBtnStyle: React.CSSProperties = {
 
 function ModelCanvas({ activeClips, testClips }: ModelCanvasProps): React.JSX.Element {
   const activeAnim = null
-  const { signBase64 } = useAnimation()
   const boneFocusRef = useRef<BoneFocusHandle>(null!)
   const [speed, setSpeed] = useState<number>(1)
 
@@ -60,7 +58,6 @@ function ModelCanvas({ activeClips, testClips }: ModelCanvasProps): React.JSX.El
           <Model
             activeAnim={activeAnim}
             activeClips={activeClips}
-            signBase64={signBase64}
             testClips={testClips}
             timeScale={speed}
           />

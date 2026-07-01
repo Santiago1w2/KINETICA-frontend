@@ -1,18 +1,8 @@
 import { useMemo, useState } from 'react'
 import type { ModelResponse, PredictionItem, TranslationResponse } from '../types/translator/type'
 import { createTranslation, pollTranslation } from '../services/translationService'
-import { sendVideoToModel } from '../services/ModelService'
+import { getRawPredictionText, sendVideoToPython } from '../services/ModelService'
 
-function uniqueConsecutiveSigns(predictions: PredictionItem[]) {
-    const signs: string[] = []
-    for (const item of predictions) {
-        const sign = (item.sign ?? '').trim()
-        if (sign && signs[signs.length - 1] !== sign) {
-        signs.push(sign)
-        }
-    }
-    return signs
-}
 
 export function useTranslationFlow() {
     const [predictions, setPredictions] = useState<PredictionItem[]>([])
@@ -24,14 +14,16 @@ export function useTranslationFlow() {
     const [isSendingBackend, setIsSendingBackend] = useState(false)
 
     const predictionText = useMemo(
-        () => uniqueConsecutiveSigns(predictions).join(' '),
+        () => getRawPredictionText(predictions),
         [predictions]
     )
 
     const handleModelResult = (body: ModelResponse) => {
         const nextPredictions = body.predictions ?? []
+        const predictedText = getRawPredictionText(nextPredictions)
         setPredictions(nextPredictions)
-        setSourceText(uniqueConsecutiveSigns(nextPredictions).join(' '))
+        setSourceText(predictedText)
+        return predictedText
     }
 
     const submitVideo = async (blob: Blob) => {
@@ -39,41 +31,45 @@ export function useTranslationFlow() {
         setIsSendingModel(true)
         setStatus('Enviando video al modelo...')
         try {
-            const body = await sendVideoToModel(blob)
-            console.log("RESPUESTA MODELO:", body)
-            handleModelResult(body)
+            const predictedText = await sendVideoToPython(blob)
+            setPredictions([])
+            setSourceText(predictedText)
             setStatus('Prediccion recibida desde el modelo.')
+            return predictedText
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Error enviando al modelo')
             setStatus('Error con el modelo.')
+            return ''
         } finally {
             setIsSendingModel(false)
         }
     }
 
-    const submitToBackend = async () => {
-        if (!sourceText.trim()) {
+    const submitToBackend = async (text?: string) => {
+        const textToTranslate = text ?? sourceText
+
+        if (!textToTranslate.trim()) {
             setError('Nose pudo traducir')
-        return
-    }
+            return
+        }
 
         setError('')
         setIsSendingBackend(true)
         setFinalText('')
         setStatus('Enviando al backend...')
 
-    try {
-        const requestId = await createTranslation(sourceText.trim())
-        setStatus('Backend acepto la traduccion. Consultando resultado...')
-        const result: TranslationResponse = await pollTranslation(requestId)
-        setFinalText(result.textOutput ?? '')
-        setStatus('Oracion mejorada recibida.')
-    } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error enviando al backend')
-        setStatus('Error con el backend.')
-    } finally {
-        setIsSendingBackend(false)
-    }
+        try {
+            const requestId = await createTranslation('SIGN_TO_TEXT', textToTranslate)
+            setStatus('Backend acepto la traduccion. Consultando resultado...')
+            const result: TranslationResponse = await pollTranslation(requestId)
+            setFinalText(result.textOutput ?? '')
+            setStatus('Oracion mejorada recibida.')
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Error enviando al backend')
+            setStatus('Error con el backend.')
+        } finally {
+            setIsSendingBackend(false)
+        }
     }
 
     return {

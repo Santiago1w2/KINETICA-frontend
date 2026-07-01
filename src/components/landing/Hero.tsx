@@ -10,7 +10,7 @@ function Hero() {
         <HeroModel />
       </div>
       <div className="landing-container landing-hero__content reveal">
-        <p className="landing-eyebrow">Traduccion inclusiva asistida por IA</p>
+        <p className="rubik landing-eyebrow">Traduccion inclusiva asistida por IA</p>
         <h1>KINETICA</h1>
         <p className="landing-hero__lead">
           Conecta lengua de senas y texto mediante traduccion inteligente, accesible y visual.

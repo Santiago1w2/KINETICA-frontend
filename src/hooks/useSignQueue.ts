@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import * as THREE from 'three'
 import { GLTFLoader, type GLTF } from 'three-stdlib'
-import { fetchSigns } from '../services/AnimationService'
+import { fetchSigns, fetchSignsByIds } from '../services/SignService'
 import type { SignResponse } from '../types/sings/type'
 
 interface SignEntry {
@@ -18,6 +18,7 @@ interface UseSignQueueResult {
     allClips: THREE.AnimationClip[]
     select: (label: string | null) => void
     loadByIds: (ids: number[]) => Promise<void>
+    loadByLabels: (labels: string[]) => Promise<void>
     playSequence: (labels: string[]) => void
     stop: () => void
     isPlaying: boolean
@@ -74,9 +75,44 @@ export function useSignQueue(): UseSignQueueResult {
         setLoading(true)
         setError(null)
         try {
-            const signs = await fetchSigns(ids)
+            const signs = await fetchSignsByIds(ids)
             if (cancelledRef.current) return
             const processed = await processSigns(signs)
+            if (cancelledRef.current) return
+            setEntries(processed)
+        } catch (err) {
+            if (!cancelledRef.current) {
+                setError(err instanceof Error ? err.message : 'Failed to load signs')
+            }
+        } finally {
+            if (!cancelledRef.current) setLoading(false)
+        }
+    }, [processSigns])
+
+    const loadByLabels = useCallback(async (labels: string[]) => {
+        const normalizedLabels = labels
+            .map((label) => normalizeSignKey(label))
+            .filter(Boolean)
+
+        if (normalizedLabels.length === 0) return
+
+        setLoading(true)
+        setError(null)
+        try {
+            const signs = await fetchSigns()
+            if (cancelledRef.current) return
+
+            const filteredSigns = signs.filter((sign) => {
+                const keys = [
+                    sign.label,
+                    sign.name,
+                    sign.gloss,
+                ].map((value) => normalizeSignKey(value ?? ''))
+
+                return keys.some((key) => normalizedLabels.includes(key))
+            })
+
+            const processed = await processSigns(filteredSigns)
             if (cancelledRef.current) return
             setEntries(processed)
         } catch (err) {
@@ -180,8 +216,13 @@ export function useSignQueue(): UseSignQueueResult {
         allClips,
         select,
         loadByIds,
+        loadByLabels,
         playSequence,
         stop,
         isPlaying,
     }
+}
+
+function normalizeSignKey(value: string) {
+    return value.trim().toLowerCase()
 }

@@ -1,4 +1,4 @@
-import type { ModelResponse } from '../types/translator/type'
+import type { ModelResponse, PredictionItem } from '../types/translator/type'
 
 const MODEL_API_URL =
     import.meta.env.VITE_MODEL_API_URL ?? 'http://127.0.0.1:8000/predict_video'
@@ -41,4 +41,27 @@ export async function sendVideoToModel(blob: Blob): Promise<ModelResponse> {
     }
 
     return body
+}
+
+function getPredictionValue(item: PredictionItem) {
+    if (typeof item === 'string') {
+        return item
+    }
+
+    return item.sign ?? item.label ?? item.gloss ?? item.text ?? item.prediction ?? ''
+}
+
+export function getRawPredictionText(predictions: PredictionItem[]) {
+    return predictions.map(getPredictionValue).join(' ')
+}
+
+export async function sendVideoToPython(blob: Blob): Promise<string> {
+    const body = await sendVideoToModel(blob)
+    const text = getRawPredictionText(body.predictions ?? [])
+
+    if (!text) {
+        throw new Error('El modelo no devolvio texto predicho.')
+    }
+
+    return text
 }
