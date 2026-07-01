@@ -1,10 +1,14 @@
 import { Link } from 'react-router-dom'
 import { FiArrowRight, FiPlayCircle } from 'react-icons/fi'
+import HeroModel from './HeroModel'
 
 function Hero() {
   return (
     <section id="inicio" className="landing-hero landing-section">
       <div className="landing-hero__background" aria-hidden="true" />
+      <div className="landing-hero__model" aria-hidden="true">
+        <HeroModel />
+      </div>
       <div className="landing-container landing-hero__content reveal">
         <p className="rubik landing-eyebrow">Traduccion inclusiva asistida por IA</p>
         <h1>KINETICA</h1>

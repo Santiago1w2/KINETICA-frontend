@@ -1,9 +1,12 @@
 import React from 'react'
 import { FaPlay, FaStop } from 'react-icons/fa'
-import type { AnimationData } from '../types/animations/type'
+
+interface NamedItem {
+    name: string
+}
 
 interface AnimationListProps {
-    animations: AnimationData[]
+    animations: NamedItem[]
     selectedName: string | null
     onSelect: (name: string | null) => void
     onPlayAll: () => void

@@ -1,5 +1,16 @@
-import type { AnimationResponse } from '../types/animations/type'
+import api from '../api/axios'
+import type { SignResponse } from '../types/sings/type'
 
-export const fetchAnimation = async (): Promise<AnimationResponse> => {
-    throw new Error('El endpoint de animaciones no esta disponible. Usa /signs para cargar senas.')
+export const fetchAllSigns = async (): Promise<SignResponse[]> => {
+    const response = await api.get<SignResponse[]>('/signs')
+    return response.data
+}
+
+export const fetchSign = async (id: number): Promise<SignResponse> => {
+    const response = await api.get<SignResponse>(`/signs/${id}`)
+    return response.data
+}
+
+export const fetchSigns = async (ids: number[]): Promise<SignResponse[]> => {
+    return Promise.all(ids.map((id) => fetchSign(id)))
 }
