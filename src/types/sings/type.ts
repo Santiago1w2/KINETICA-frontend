@@ -7,3 +7,11 @@ export interface SignResponse {
     active: boolean;
     animationSrc: string | null;
 }
+
+export interface SignRequest {
+    label: string;
+    mediaRef: string;
+    locale: string;
+    active: boolean;
+    animationSrc: string;
+}

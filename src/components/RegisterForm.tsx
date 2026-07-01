@@ -56,7 +56,7 @@ function RegisterForm() {
         setLoading(true)
         try {
             const res = await register({ email, password, username })
-            authLogin(res)
+            await authLogin(res)
             navigate('/dashboard')
         } catch (err: unknown) {
             const axiosErr = err as { response?: { data?: { message?: string; error?: string } } }

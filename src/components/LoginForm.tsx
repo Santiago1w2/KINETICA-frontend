@@ -41,7 +41,7 @@ function LoginForm() {
         setLoading(true)
         try {
             const res = await login({ email, password })
-            authLogin(res)
+            await authLogin(res)
             navigate('/dashboard')
         } catch (err: unknown) {
             const axiosErr = err as { response?: { data?: { message?: string; error?: string } } }

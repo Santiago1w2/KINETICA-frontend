@@ -13,6 +13,8 @@ import TextToSing from '../pages/traductor/TextToSing';
 import PerfilPage from '../pages/traductor/PerfilPage';
 import HomeTraductorPage from '../pages/traductor/HomeTraductorPage';
 import ProtectedRoute from './ProtectedRoute';
+import AdminRoute from './AdminRoute';
+import SignsAdminPage from '../pages/traductor/SignsAdminPage';
 
 const router = createBrowserRouter([
 
@@ -60,6 +62,15 @@ const router = createBrowserRouter([
                 {
                     path: "perfil",
                     element: <PerfilPage />,
+                },
+                {
+                    element: <AdminRoute />,
+                    children: [
+                        {
+                            path: "signs-admin",
+                            element: <SignsAdminPage />,
+                        },
+                    ],
                 },
             ],
         },

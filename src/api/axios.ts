@@ -71,6 +71,7 @@ api.interceptors.response.use(
                 localStorage.removeItem("userId");
                 localStorage.removeItem("email");
                 localStorage.removeItem("username");
+                localStorage.removeItem("user");
 
                 window.location.href = "/auth/login";
 

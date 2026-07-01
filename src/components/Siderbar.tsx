@@ -7,6 +7,7 @@ import LogoutIcon from "../assets/icons/LogoutIcon.js"
 import { useAuth } from "../hooks/useAuth.js"
 import { useState } from "react"
 import LoadingSpinner from "./LoadingSpinner"
+import { FiSettings } from "react-icons/fi"
 
 type PropsAcount = {
     username: string | undefined
@@ -65,6 +66,7 @@ export default function Sidebar() {
     const { logout, user } = useAuth()
     const navigate = useNavigate()
     const [loggingOut, setLoggingOut] = useState(false)
+    const isAdmin = user?.role === "ADMIN"
 
     const handleLogout = async () => {
         if (loggingOut) return
@@ -110,6 +112,13 @@ export default function Sidebar() {
                     <PerfilIcon size={20} />
                     Perfil
                 </NavLink>
+
+                {isAdmin ? (
+                    <NavLink to="/dashboard/signs-admin" className={navLinkClass}>
+                        <FiSettings size={20} />
+                        Administrar se&ntilde;as
+                    </NavLink>
+                ) : null}
             </nav>
 
             <div className="mt-auto space-y-3 border-t border-slate-200 p-3">

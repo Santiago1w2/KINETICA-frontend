@@ -25,7 +25,7 @@ export default function OAuthCallback() {
 
                 const user = await getMe()
 
-                login({
+                await login({
                     userId: user.userId ?? user.id ?? 0,
                     email: user.email,
                     username: user.username,

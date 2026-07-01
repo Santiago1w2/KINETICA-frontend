@@ -68,7 +68,7 @@ function getErrorMessage(err: unknown, fallback: string) {
 
 function PerfilPage() {
     const navigate = useNavigate()
-    const { logout } = useAuth()
+    const { accessToken, logout, updateUser, user } = useAuth()
     const [profile, setProfile] = useState<User | null>(null)
     const [loading, setLoading] = useState(true)
     const [savingProfile, setSavingProfile] = useState(false)
@@ -90,6 +90,11 @@ function PerfilPage() {
         let cancelled = false
 
         const loadProfile = async () => {
+            if (!accessToken) {
+                setLoading(false)
+                return
+            }
+
             setLoading(true)
             setError('')
 
@@ -98,6 +103,7 @@ function PerfilPage() {
                 if (cancelled) return
 
                 setProfile(data)
+                updateUser(data)
                 setForm({
                     username: data.username ?? '',
                 })
@@ -115,7 +121,29 @@ function PerfilPage() {
         return () => {
             cancelled = true
         }
-    }, [])
+    }, [accessToken, updateUser])
+
+    useEffect(() => {
+        if (!user) return
+
+        setProfile((current) => ({
+            ...(current ?? user),
+            ...user,
+        }))
+        setForm((current) => (
+            current.username === user.username
+                ? current
+                : { ...current, username: user.username ?? '' }
+        ))
+    }, [
+        user?.id,
+        user?.userId,
+        user?.email,
+        user?.username,
+        user?.role,
+        user?.accountStatus,
+        user?.status,
+    ])
 
     const usernameError = useMemo(() => {
         const username = form.username.trim()
@@ -144,8 +172,14 @@ function PerfilPage() {
         setSavingProfile(true)
         try {
             const updated = await updateProfile({ username: form.username.trim() })
-            setProfile((current) => ({ ...current, ...updated }))
-            setForm({ username: updated.username ?? form.username.trim() })
+            const updatedUser = {
+                ...updated,
+                username: updated.username ?? form.username.trim(),
+            }
+
+            updateUser(updatedUser)
+            setProfile((current) => ({ ...(current ?? user ?? updatedUser), ...updatedUser }))
+            setForm({ username: updatedUser.username })
             setSuccess('Perfil actualizado correctamente.')
         } catch (err) {
             setError(getErrorMessage(err, 'No se pudo actualizar el perfil.'))
